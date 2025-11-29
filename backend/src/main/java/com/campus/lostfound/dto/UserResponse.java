@@ -2,8 +2,10 @@ package com.campus.lostfound.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {
     private Long id;
@@ -11,4 +13,6 @@ public class UserResponse {
     private String lastName;
     private String email;
     private String studentId;
+    private String phoneNumber;
+    private String avatarUrl;
 }
