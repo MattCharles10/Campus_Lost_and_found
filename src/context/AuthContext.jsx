@@ -1,4 +1,5 @@
 ﻿import React, { createContext, useState, useContext, useEffect } from 'react';
+import { authService } from '../services/authService';
 
 const AuthContext = createContext();
 
@@ -13,99 +14,190 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    
-    if (token && userData) {
-      setUser(JSON.parse(userData));
-    }
-    setLoading(false);
+    checkAuthStatus();
   }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      // Instead of verifyToken endpoint, just check if we have valid token/user in localStorage
+      const token = authService.getToken();
+      const storedUser = authService.getCurrentUser();
+      
+      if (token && storedUser) {
+        // For now, trust the localStorage (in production, you'd verify with backend)
+        setUser(storedUser);
+      } else {
+        // Clear any invalid data
+        authService.logout();
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      authService.logout();
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const login = async (email, password) => {
     try {
-      console.log('Login attempt:', email);
-      // Mock login for now
-      const mockUser = { 
-        id: 1, 
-        email, 
-        firstName: 'John', 
-        lastName: 'Doe',
-        studentId: 'STU12345'
-      };
-      localStorage.setItem('token', 'mock-jwt-token');
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      setUser(mockUser);
-      return { success: true };
+      setError(null);
+      setLoading(true);
+      const response = await authService.login(email, password);
+      
+      setUser(response.user);
+      return { success: true, user: response.user };
     } catch (error) {
-      return { success: false, error: 'Login failed' };
+      const errorMsg = error.message || 'Login failed. Please check your credentials.';
+      setError(errorMsg);
+      return { success: false, error: errorMsg };
+    } finally {
+      setLoading(false);
     }
   };
 
   const register = async (userData) => {
     try {
-      console.log('Register attempt:', userData);
-      // Mock registration for now
-      const mockUser = { 
-        id: 2, 
-        ...userData 
-      };
-      localStorage.setItem('token', 'mock-jwt-token');
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      setUser(mockUser);
-      return { success: true };
+      setError(null);
+      setLoading(true);
+      const response = await authService.register(userData);
+      
+      setUser(response.user);
+      return { success: true, user: response.user };
     } catch (error) {
-      return { success: false, error: 'Registration failed' };
+      const errorMsg = error.message || 'Registration failed. Please try again.';
+      setError(errorMsg);
+      return { success: false, error: errorMsg };
+    } finally {
+      setLoading(false);
     }
   };
 
   const googleLogin = async (accessToken) => {
     try {
-      console.log('Google login:', accessToken);
-      // Mock Google login for now
-      const mockUser = { 
-        id: 3, 
-        email: 'google@user.com', 
-        firstName: 'Google', 
-        lastName: 'User',
-        studentId: 'GOOG123'
-      };
-      localStorage.setItem('token', 'mock-jwt-token');
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      setUser(mockUser);
-      return { success: true };
+      setError(null);
+      setLoading(true);
+      const response = await authService.googleAuth(accessToken);
+      
+      setUser(response.user);
+      return { success: true, user: response.user };
     } catch (error) {
-      return { success: false, error: 'Google login failed' };
+      const errorMsg = error.message || 'Google login failed. Please try again.';
+      setError(errorMsg);
+      return { success: false, error: errorMsg };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Google Dev login for testing (without real Google OAuth)
+  const googleDevLogin = async (email, firstName, lastName) => {
+    try {
+      setError(null);
+      setLoading(true);
+      const response = await authService.googleDevAuth(email, firstName, lastName);
+      
+      setUser(response.user);
+      return { success: true, user: response.user };
+    } catch (error) {
+      const errorMsg = error.message || 'Google Dev login failed. Please try again.';
+      setError(errorMsg);
+      return { success: false, error: errorMsg };
+    } finally {
+      setLoading(false);
     }
   };
 
   const forgotPassword = async (email) => {
-    console.log('Forgot password:', email);
-    return { success: true };
+    try {
+      setError(null);
+      setLoading(true);
+      const response = await authService.forgotPassword(email);
+      return { success: true, message: response.message };
+    } catch (error) {
+      const errorMsg = error.message || 'Failed to send reset instructions. Please try again.';
+      setError(errorMsg);
+      return { success: false, error: errorMsg };
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetPassword = async (token, newPassword) => {
-    console.log('Reset password:', token, newPassword);
-    return { success: true };
+    try {
+      setError(null);
+      setLoading(true);
+      const response = await authService.resetPassword(token, newPassword);
+      return { success: true, message: response.message };
+    } catch (error) {
+      const errorMsg = error.message || 'Password reset failed. Please try again.';
+      setError(errorMsg);
+      return { success: false, error: errorMsg };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const validateResetToken = async (token) => {
+    try {
+      setError(null);
+      setLoading(true);
+      const response = await authService.validateResetToken(token);
+      return { success: true, data: response };
+    } catch (error) {
+      const errorMsg = error.message || 'Token validation failed. Please request a new reset link.';
+      setError(errorMsg);
+      return { success: false, error: errorMsg };
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    authService.logout();
     setUser(null);
+    setError(null);
+    setLoading(false);
+  };
+
+  const clearError = () => {
+    setError(null);
+  };
+
+  // Update user in state (when you get updated user data from backend)
+  const updateUser = (userData) => {
+    localStorage.setItem('user', JSON.stringify(userData));
+    setUser(userData);
+  };
+
+  const refreshUserData = async () => {
+    try {
+      // If you add a /me endpoint, you can fetch fresh user data here
+      // const response = await authService.getCurrentUserFromAPI();
+      // updateUser(response.user);
+    } catch (error) {
+      console.error('Failed to refresh user data:', error);
+    }
   };
 
   const value = {
     user,
     loading,
+    error,
     login,
     register,
     googleLogin,
+    googleDevLogin,
     forgotPassword,
     resetPassword,
-    logout
+    validateResetToken,
+    logout,
+    clearError,
+    updateUser,
+    refreshUserData,
+    isAuthenticated: !!user && !!authService.getToken()
   };
 
   return (

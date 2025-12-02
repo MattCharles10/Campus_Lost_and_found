@@ -9,7 +9,7 @@ import {
   InputAdornment,
   IconButton
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Visibility, VisibilityOff, Email, Lock } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import SubmitButton from '../common/Form/SubmitButton';
@@ -17,6 +17,7 @@ import GoogleLoginButton from './GoogleLoginButton';
 
 const LoginForm = () => {
   const { login, googleLogin } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -36,26 +37,36 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
 
     try {
       const result = await login(formData.email, formData.password);
-      if (!result.success) {
+      if (result.success) {
+        navigate('/dashboard');
+      } else {
         setError(result.error || 'Login failed');
       }
     } catch (err) {
-      setError('Login failed. Please try again.');
+      setError(err.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleGoogleSuccess = async (response) => {
     setLoading(true);
     try {
-      await googleLogin(response.access_token);
+      const result = await googleLogin(response.access_token);
+      if (result.success) {
+        navigate('/dashboard');
+      } else {
+        setError(result.error || 'Google login failed');
+      }
     } catch (err) {
-      setError('Google login failed. Please try again.');
+      setError(err.message || 'Google login failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleGoogleFailure = (error) => {

@@ -8,14 +8,16 @@ import {
   InputAdornment,
   IconButton
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Visibility, VisibilityOff, Person, Email, Lock, School } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import SubmitButton from '../common/Form/SubmitButton';
 import GoogleLoginButton from './GoogleLoginButton';
 
 const RegisterForm = () => {
+  
   const { register, googleLogin } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -36,39 +38,63 @@ const RegisterForm = () => {
     setError('');
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  // Frontend validation
+  if (formData.password !== formData.confirmPassword) {
+    setError('Passwords do not match');
+    return;
+  }
+
+  if (formData.password.length < 6) {
+    setError('Password must be at least 6 characters');
+    return;
+  }
+
+  setLoading(true);
+  setError('');
+  
+  try {
+    // IMPORTANT: Send BOTH password AND confirmPassword!
+    const dataToSend = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      confirmPassword: formData.confirmPassword, // ADD THIS!
+      studentId: formData.studentId || null
+    };
     
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
+    console.log('📤 Sending to backend (with confirmPassword):', dataToSend);
+    
+    const result = await register(dataToSend);
+    
+    if (result.success) {
+      navigate('/dashboard');
+    } else {
+      setError(result.error || 'Registration failed');
     }
-
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const result = await register(formData);
-      if (!result.success) {
-        setError(result.error || 'Registration failed');
-      }
-    } catch (err) {
-      setError('Registration failed. Please try again.');
-    }
+  } catch (err) {
+    setError(err.message || 'Registration failed. Please try again.');
+  } finally {
     setLoading(false);
-  };
-
+  }
+};
   const handleGoogleSuccess = async (response) => {
     setLoading(true);
     try {
-      await googleLogin(response.access_token);
+      const result = await googleLogin(response.access_token);
+      if (result.success) {
+        navigate('/dashboard');
+      } else {
+        setError(result.error || 'Google registration failed');
+      }
     } catch (err) {
       setError('Google registration failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleGoogleFailure = (error) => {
@@ -98,6 +124,8 @@ const RegisterForm = () => {
           value={formData.firstName}
           onChange={handleChange}
           required
+          error={!!error && error.toLowerCase().includes('first name')}
+          helperText={error && error.toLowerCase().includes('first name') ? error : ''}
           sx={{
             flex: 1,
             '& .MuiOutlinedInput-root': {
@@ -123,6 +151,8 @@ const RegisterForm = () => {
           value={formData.lastName}
           onChange={handleChange}
           required
+          error={!!error && error.toLowerCase().includes('last name')}
+          helperText={error && error.toLowerCase().includes('last name') ? error : ''}
           sx={{
             flex: 1,
             '& .MuiOutlinedInput-root': {
@@ -145,6 +175,8 @@ const RegisterForm = () => {
         value={formData.email}
         onChange={handleChange}
         required
+        error={!!error && error.toLowerCase().includes('email')}
+        helperText={error && error.toLowerCase().includes('email') ? error : ''}
         sx={{
           mb: 2,
           '& .MuiOutlinedInput-root': {
@@ -199,6 +231,8 @@ const RegisterForm = () => {
         value={formData.password}
         onChange={handleChange}
         required
+        error={!!error && error.toLowerCase().includes('password')}
+        helperText={error && error.toLowerCase().includes('password') ? error : ''}
         sx={{
           mb: 2,
           '& .MuiOutlinedInput-root': {
@@ -238,6 +272,8 @@ const RegisterForm = () => {
         value={formData.confirmPassword}
         onChange={handleChange}
         required
+        error={!!error && error.toLowerCase().includes('password')}
+        helperText={error && error.toLowerCase().includes('password') ? error : ''}
         sx={{
           mb: 2,
           '& .MuiOutlinedInput-root': {
