@@ -1,19 +1,19 @@
 const API_URL = 'http://localhost:8082';
 
 export const authService = {
-  // Login with email/password - ENHANCED VERSION
+ 
   async login(email, password) {
     try {
       console.log('🔍 [authService] Login attempt for:', email);
       
-      const response = await fetch(`${API_URL}/auth/login`, {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
         body: JSON.stringify({ email, password }),
-        credentials: 'include' // Add this for CORS with credentials
+        credentials: 'include' 
       });
       
       console.log('🔍 [authService] Response status:', response.status);
@@ -72,7 +72,7 @@ async register(userData) {
     // Just send the data as-is
     console.log('🔍 [authService] Sending to backend (including confirmPassword):', userData);
     
-    const response = await fetch(`${API_URL}/auth/register`, {
+    const response = await fetch(`${API_URL}/api/auth/register`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -139,7 +139,7 @@ async register(userData) {
     try {
       console.log('🔍 [authService] Google auth attempt');
       
-      const response = await fetch(`${API_URL}/auth/google`, {
+      const response = await fetch(`${API_URL}/api/auth/google`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -174,7 +174,7 @@ async register(userData) {
     try {
       console.log('🔍 [authService] Google Dev auth attempt for:', email);
       
-      const response = await fetch(`${API_URL}/auth/google-dev`, {
+      const response = await fetch(`${API_URL}/api/auth/google-dev`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
