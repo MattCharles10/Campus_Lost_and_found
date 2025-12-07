@@ -962,7 +962,7 @@ const LandingPage = () => {
                         Campus Office
                       </Typography>
                       <Typography sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                        Student Union Building, Room 205<br />
+                        Team_3 Building, Room 205<br />
                         University Campus
                       </Typography>
                     </Box>
@@ -1147,7 +1147,7 @@ const LandingPage = () => {
                 </Typography>
               </Box>
               <Typography sx={{ color: 'rgba(255, 255, 255, 0.7)', mb: 3 }}>
-                Reuniting lost items with their owners across campus communities since 2023.
+                Reuniting lost items with their owners across campus communities since 2025.
               </Typography>
             </Grid>
 
@@ -1236,7 +1236,7 @@ const LandingPage = () => {
             gap: 2
           }}>
             <Typography sx={{ color: 'rgba(255, 255, 255, 0.5)' }}>
-              © 2024 Campus Lost & Found. All rights reserved.
+              © 2025 Campus Lost & Found. All rights reserved.
             </Typography>
             <Stack direction="row" spacing={2}>
               <MuiLink href="#" sx={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.9rem' }}>
