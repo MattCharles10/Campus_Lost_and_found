@@ -13,7 +13,7 @@ const SubmitButton = ({ loading, children, ...props }) => {
       sx={{
         mt: 2,
         mb: 2,
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #29164dff 0%, #764ba2 100%)',
         border: 'none',
         borderRadius: 2,
         padding: '12px 24px',
@@ -23,7 +23,7 @@ const SubmitButton = ({ loading, children, ...props }) => {
         boxShadow: '0 4px 15px 0 rgba(116, 75, 162, 0.3)',
         transition: 'all 0.3s ease',
         '&:hover': {
-          background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+          background: 'linear-gradient(135deg, #764ba2 0%, #29164dff 100%)',
           boxShadow: '0 6px 20px 0 rgba(116, 75, 162, 0.4)',
           transform: 'translateY(-2px)',
         },

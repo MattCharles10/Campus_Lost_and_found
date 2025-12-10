@@ -257,7 +257,7 @@ const RegisterForm = () => {
                 edge="end"
                 sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
               >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
+                {showPassword ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
           ),
@@ -312,7 +312,7 @@ const RegisterForm = () => {
             component={RouterLink}
             to="/login"
             sx={{
-              color: '#667eea',
+              color: '#64ccfcff',
               textDecoration: 'none',
               fontWeight: 'bold',
               '&:hover': {

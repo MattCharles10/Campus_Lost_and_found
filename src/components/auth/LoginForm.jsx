@@ -139,7 +139,7 @@ const LoginForm = () => {
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <Lock sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
+              <Lock sx={{ color: 'rgba(255, 255, 255, 0.8)' }} />
             </InputAdornment>
           ),
           endAdornment: (
@@ -149,7 +149,7 @@ const LoginForm = () => {
                 edge="end"
                 sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
               >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
+                {showPassword ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
           ),
@@ -166,7 +166,7 @@ const LoginForm = () => {
           to="/forgot-password"
           variant="body2"
           sx={{
-            color: 'rgba(255, 255, 255, 0.8)',
+            color: 'rgba(255, 255, 255, 0.86)',
             textDecoration: 'none',
             '&:hover': {
               color: '#667eea',
@@ -199,7 +199,7 @@ const LoginForm = () => {
       />
 
       <Box sx={{ textAlign: 'center', mt: 2 }}>
-        <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+        <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.89)' }}>
           Don't have an account?{' '}
           <Link
             component={RouterLink}
