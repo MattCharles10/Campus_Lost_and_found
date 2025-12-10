@@ -1,0 +1,28 @@
+/* Add these styles for Material-UI compatibility */
+.MuiPaper-root {
+  transition: all 0.3s ease !important;
+}
+
+.MuiButton-root {
+  text-transform: none !important;
+  font-weight: 600 !important;
+}
+
+/* Custom scrollbar for Material-UI */
+.MuiPaper-root::-webkit-scrollbar {
+  width: 8px;
+}
+
+.MuiPaper-root::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.MuiPaper-root::-webkit-scrollbar-thumb {
+  background: #8b5cf6;
+  border-radius: 4px;
+}
+
+.MuiPaper-root::-webkit-scrollbar-thumb:hover {
+  background: #b088f4;
+}
