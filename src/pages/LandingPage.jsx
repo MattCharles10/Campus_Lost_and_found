@@ -192,7 +192,7 @@ const LandingPage = () => {
     <Box sx={{ 
       position: 'relative',
       minHeight: '100vh',
-      background: 'ivory',
+      background: 'linear-gradient(135deg, #667eeaff 0%, #2603c2c2 100%)',
       color: 'white',
       overflow: 'hidden'
     }}>
@@ -205,7 +205,7 @@ const LandingPage = () => {
           position: 'sticky',
           top: 0,
           zIndex: 1000,
-          background: 'rgba(63, 40, 82, 0.84)',
+          background: 'linear-gradient(135deg, #030d38ff 0%, #0a1363af 100%)',
           backdropFilter: 'blur(10px)',
           borderBottom: '1px solid rgba(20, 18, 18, 0.2)',
           borderRadius:0
@@ -224,7 +224,7 @@ const LandingPage = () => {
                 sx={{
                   width: 48,
                   height: 48,
-                  background: 'linear-gradient(135deg, #4a1b88ff 0%, #e4daeeff 100%)',
+                  background: 'linear-gradient(135deg, #1339e0ff 0%, #170d75ff 100%)',
                   borderRadius: '12px',
                   display: 'flex',
                   alignItems: 'center',
@@ -285,7 +285,7 @@ const LandingPage = () => {
                 variant="contained"
                 onClick={() => navigate(user ? '/dashboard' : '/login')}
                 sx={{
-                  background: 'linear-gradient(135deg, #29164dff 0%, #764ba2 100%)',
+                  background: 'linear-gradient(135deg, #1339e0ff 0%, #170d75ff 100%)',
                   color: 'white',
                   '&:hover': {
                     transform: 'translateY(-2px)',
@@ -311,7 +311,7 @@ const LandingPage = () => {
                   icon={<TrustIcon />}
                   sx={{ 
                     mb: 3,
-                    background: 'rgba(103, 31, 124, 0.83)',
+                    background: 'rgba(12, 2, 94, 0.83)',
                     color: 'white',
                     fontWeight: 'medium'
                   }}
@@ -322,7 +322,7 @@ const LandingPage = () => {
                     fontSize: { xs: '2.5rem', md: '3.5rem' },
                     fontWeight: 'bold',
                     mb: 2,
-                    background: 'linear-gradient(135deg, #2a144dff 0%, #8188aaff 100%)',
+                    background: 'linear-gradient(135deg, #01020cff 0%, #071455ad 100%)',
                     backgroundClip: 'text',
                     WebkitBackgroundClip: 'text',
                     color: 'transparent',
@@ -334,7 +334,7 @@ const LandingPage = () => {
                 <Typography 
                   variant="h5" 
                   sx={{ 
-                    color: 'rgba(84, 23, 102, 1)',
+                    color: 'white',
                     mb: 4,
                     fontWeight: 'normal'
                   }}
@@ -347,7 +347,7 @@ const LandingPage = () => {
                 <Paper
                   sx={{
                     p: 1,
-                    background: 'rgba(80, 50, 105, 0.88)',
+                    background: 'linear-gradient(135deg, rgba(20, 17, 36, 1) 0%, rgba(16, 17, 92, 0.93) 100%)',
                     backdropFilter: 'blur(10px)',
                     borderRadius: 3,
                     mb: 4
@@ -380,7 +380,7 @@ const LandingPage = () => {
                       variant="contained"
                       onClick={handleSearch}
                       sx={{
-                        background: 'linear-gradient(135deg, #0a0316ff 0%, #764ba2 100%)',
+                        background: 'linear-gradient(135deg, #1339e0ff 0%, #170d75ff 100%)',
                         borderRadius: 2,
                         minWidth: 100
                       }}
@@ -397,7 +397,7 @@ const LandingPage = () => {
                     onClick={() => navigate(user ? '/dashboard' : '/register')}
                     endIcon={<ArrowForwardIcon />}
                     sx={{
-                      background: 'linear-gradient(135deg, #29164dff 0%, #764ba2 100%)',
+                      background: 'linear-gradient(135deg, #1339e0ff 0%, #170d75ff 100%)',
                       color: 'white',
                       py: 1.5,
                       px: 4,
@@ -416,6 +416,7 @@ const LandingPage = () => {
                     startIcon={<PlayIcon />}
                     onClick={() => document.getElementById('about').scrollIntoView({ behavior: 'smooth' })}
                     sx={{
+                      background:'linear-gradient(135deg, #1339e0ff 0%, #170d75ff 100%)',
                       borderColor: 'rgba(255, 255, 255, 0.3)',
                       color: 'white',
                       '&:hover': {
@@ -439,7 +440,7 @@ const LandingPage = () => {
                     sx={{
                       width: '100%',
                       height: 400,
-                      background: 'linear-gradient(135deg, rgba(53, 8, 83, 0.94) 0%, rgba(54, 19, 78, 0.71) 100%)',
+                      background: 'linear-gradient(135deg, rgba(10, 3, 37, 1) 0%, rgba(7, 10, 156, 0.93) 100%)',
                       borderRadius: 4,
                       position: 'relative',
                       overflow: 'hidden',
@@ -506,7 +507,7 @@ const LandingPage = () => {
           {stats.map((stat, index) => (
             <Grid item xs={6} md={3} key={index}>
               <Zoom in={true} timeout={500 + index * 200}>
-                <GlassCard sx={{ p: 3, textAlign: 'center',background:'rgba(49, 16, 71, 0.78)'}}>
+                <GlassCard sx={{ p: 3, textAlign: 'center',background:'rgba(21, 10, 63, 0.69)'}}>
                   <Box sx={{ 
                     display: 'inline-flex',
                     p: 1.5,
@@ -534,14 +535,14 @@ const LandingPage = () => {
       </Container>
 
       {/* Features Section */}
-      <Box id="features" sx={{ py: 8, background: 'rgba(63, 40, 82, 0.7)' }}>
+      <Box id="features" sx={{ py: 8, background: 'linear-gradient(135deg, #0305118e 0%, #1c0975c2 100%)' }}>
         <Container maxWidth="xl">
           <Box sx={{ textAlign: 'center', mb: 6 }}>
             <Chip 
               label="FEATURES" 
               sx={{ 
                 mb: 2,
-                background: 'rgba(17, 53, 214, 0.2)',
+                background: 'rgba(255, 255, 255, 1)',
                 color: '#0f1f63ff',
                 fontWeight: 'bold',
                 fontSize:15
@@ -570,7 +571,7 @@ const LandingPage = () => {
                   <GlassCard sx={{ 
                     p: 3, 
                     height: '100%',
-                    background:'rgba(63, 40, 82, 0.7)',
+                    background:'rgba(18, 55, 216, 0.43)',
                     transition: 'transform 0.3s',
                     '&:hover': {
                       transform: 'translateY(-8px)',
@@ -615,21 +616,21 @@ const LandingPage = () => {
                   label="ABOUT US" 
                   sx={{ 
                     mb: 3,
-                    background: 'rgba(22, 177, 86, 0.15)',
+                    background: 'rgba(255, 255, 255, 1)',
                     color: '#11993eff',
                     fontSize:15,
                     fontWeight: 'bold'
                   }}
                 />
                 <Typography variant="h2" sx={{ 
-                  color: 'rgba(50, 4, 88, 0.7)',
+                  color: 'rgba(244, 241, 247, 1)',
                   fontWeight: 'bold',
                   mb: 3
                 }}>
                   Our Mission: Connect Campus Communities
                 </Typography>
                 <Typography variant="body1" sx={{ 
-                  color: 'rgba(63, 40, 82, 0.87)',
+                  color: 'rgba(242, 237, 247, 1)',
                   mb: 4,
                   fontSize: '1.3rem',
                   lineHeight: 1.8
@@ -650,12 +651,12 @@ const LandingPage = () => {
                   ].map((item, index) => (
                     <ListItem key={index} sx={{ px: 0, py: 0.5 }}>
                       <ListItemIcon sx={{ minWidth: 36 }}>
-                        <CheckCircleIcon sx={{ color: '#4ecdc4' }} />
+                        <CheckCircleIcon sx={{ color: '#3cff6dff' }} />
                       </ListItemIcon>
                       <ListItemText 
                         primary={item}
                         primaryTypographyProps={{ 
-                          sx: { fontSize:18,color: 'rgba(63, 40, 82, 0.97)' }
+                          sx: { fontSize:18,color: 'rgba(255, 255, 255, 0.97)' }
                         }}
                       />
                     </ListItem>
@@ -665,7 +666,7 @@ const LandingPage = () => {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <GlassCard sx={{ p: 4,background:'rgba(63, 40, 82, 0.84)'}}>
+              <GlassCard sx={{ p: 4,background:'rgba(21, 10, 63, 0.69)'}}>
                 <Typography variant="h5" sx={{ 
                   color: 'white',
                   fontWeight: 'bold',
@@ -726,7 +727,7 @@ const LandingPage = () => {
       </Box>
 
       {/* App Description Section */}
-      <Box sx={{ py: 8, background: 'rgba(63, 40, 82, 0.7)' }}>
+      <Box sx={{ py: 8, background: 'linear-gradient(135deg, #0305118e 0%, #1c0975c2 100%)' }}>
         <Container maxWidth="xl">
           <Box sx={{ textAlign: 'center', mb: 6 }}>
             <Chip 
@@ -783,7 +784,7 @@ const LandingPage = () => {
                     justifyContent: 'center',
                     width: 60,
                     height: 60,
-                    background: 'linear-gradient(135deg, #29164dff 0%, #764ba2 100%)',
+                    background: 'linear-gradient(135deg, #5a75ecff 0%, #1800f1ff 100%)',
                     borderRadius: '50%',
                     mb: 3,
                     fontSize: '1.5rem',
@@ -825,14 +826,14 @@ const LandingPage = () => {
             label="TESTIMONIALS" 
             sx={{ 
               mb: 2,
-              background: 'rgba(150, 206, 180, 0.2)',
+              background: 'rgba(255, 255, 255, 1)',
               color: '#17b63aff',
               fontWeight: 'bold',
               fontSize:15
             }}
           />
           <Typography variant="h2" sx={{ 
-            color: 'rgba(63, 40, 82, 0.84)',
+            color: 'rgba(255, 255, 255, 1)',
             fontWeight: 'bold',
             mb: 2
           }}>
@@ -843,7 +844,7 @@ const LandingPage = () => {
         <Grid container spacing={3}>
           {testimonials.map((testimonial, index) => (
             <Grid item xs={12} md={4} key={index}>
-              <GlassCard sx={{ p: 3, height: '100%',background:'rgba(63, 40, 82, 0.84)' }}>
+              <GlassCard sx={{ p: 3, height: '100%',background:'rgba(21, 10, 63, 0.69)' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                   <Avatar src={testimonial.avatar} sx={{ width: 60, height: 60, mr: 2 }} />
                   <Box>
@@ -874,7 +875,7 @@ const LandingPage = () => {
       </Container>
 
       {/* Contact Us Section */}
-      <Box id="contact" sx={{ py: 8, background: 'rgba(63, 40, 82, 0.7)' }}>
+      <Box id="contact" sx={{ py: 8, background: 'linear-gradient(135deg, #0305118e 0%, #1c0975c2 100%)' }}>
         <Container maxWidth="xl">
           <Grid container spacing={6}>
             <Grid item xs={12} md={6}>
@@ -913,11 +914,11 @@ const LandingPage = () => {
                       justifyContent: 'center',
                       width: 48,
                       height: 48,
-                      background: 'linear-gradient(135deg, #29164dff 0%, #764ba2 100%)',
+                      background: 'linear-gradient(135deg, #5a75ecff 0%, #1800f1ff 100%)',
                       borderRadius: '50%',
                       mr: 2
                     }}>
-                      <EmailIcon sx={{ color: '#e41111ff' }} />
+                      <EmailIcon sx={{ color: '#e25f12ff' }} />
                     </Box>
                     <Box>
                       <Typography variant="h6" sx={{ color: 'white', mb: 0.5 }}>
@@ -936,11 +937,11 @@ const LandingPage = () => {
                       justifyContent: 'center',
                       width: 48,
                       height: 48,
-                      background: 'linear-gradient(135deg, #29164dff 0%, #764ba2 100%)',
+                      background: 'linear-gradient(135deg, #5a75ecff 0%, #1800f1ff 100%)',
                       borderRadius: '50%',
                       mr: 2
                     }}>
-                      <PhoneIcon sx={{ color: '#09eb14ff' }} />
+                      <PhoneIcon sx={{ color: '#59ff62ff' }} />
                     </Box>
                     <Box>
                       <Typography variant="h6" sx={{ color: 'white', mb: 0.5 }}>
@@ -959,7 +960,7 @@ const LandingPage = () => {
                       justifyContent: 'center',
                       width: 48,
                       height: 48,
-                      background: 'linear-gradient(135deg, #29164dff 0%, #764ba2 100%)',
+                      background: 'linear-gradient(135deg, #5a75ecff 0%, #1800f1ff 100%)',
                       borderRadius: '50%',
                       mr: 2
                     }}>
@@ -982,16 +983,16 @@ const LandingPage = () => {
                     Follow Us
                   </Typography>
                   <Stack direction="row" spacing={2}>
-                    <IconButton sx={{ background: 'linear-gradient(135deg, #29164dff 0%, #764ba2 100%)', color: 'white' }}>
+                    <IconButton sx={{ background: 'linear-gradient(135deg, #5a75ecff 0%, #1800f1ff 100%)', color: 'white' }}>
                       <Facebook />
                     </IconButton>
-                    <IconButton sx={{ background: 'linear-gradient(135deg, #29164dff 0%, #764ba2 100%)', color: 'white' }}>
+                    <IconButton sx={{ background: 'linear-gradient(135deg, #5a75ecff 0%, #1800f1ff 100%)', color: 'white' }}>
                       <Twitter />
                     </IconButton>
-                    <IconButton sx={{ background: 'linear-gradient(135deg, #29164dff 0%, #764ba2 100%)', color: 'white' }}>
+                    <IconButton sx={{ background: 'linear-gradient(135deg, #5a75ecff 0%, #1800f1ff 100%)', color: 'white' }}>
                       <Instagram />
                     </IconButton>
-                    <IconButton sx={{ background: 'linear-gradient(135deg, #29164dff 0%, #764ba2 100%)', color: 'white' }}>
+                    <IconButton sx={{ background: 'linear-gradient(135deg, #5a75ecff 0%, #1800f1ff 100%)', color: 'white' }}>
                       <LinkedIn />
                     </IconButton>
                   </Stack>
@@ -1000,7 +1001,7 @@ const LandingPage = () => {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <GlassCard sx={{ p: 4,background:'rgba(63, 40, 82, 0.84)'}}>
+              <GlassCard sx={{ p: 4,background:'rgba(3, 6, 17, 0.51)'}}>
                 <Typography variant="h5" sx={{ 
                   color: 'white',
                   fontWeight: 'bold',
@@ -1064,13 +1065,13 @@ const LandingPage = () => {
                     variant="contained"
                     size="large"
                     sx={{
-                      background: 'linear-gradient(135deg, #29164dff 0%, #764ba2 100%)',
+                      background: 'linear-gradient(135deg, #1339e0ff 0%, #170d75ff 100%)',
                       color: 'white',
                       py: 1.5,
                       borderRadius: 2,
                       '&:hover': {
                         transform: 'translateY(-2px)',
-                        boxShadow: '0 8px 25px rgba(117, 35, 184, 0.5)'
+                        boxShadow: '0 8px 25px rgba(4, 1, 182, 0.5)'
                       }
                     }}
                   >
@@ -1085,7 +1086,7 @@ const LandingPage = () => {
 
       {/* CTA Section */}
       <Container maxWidth="xl" sx={{ py: 8 }}>
-        <GlassCard sx={{ p: { xs: 3, md: 6 }, textAlign: 'center',background:'rgba(63, 40, 82, 0.84)' }}>
+        <GlassCard sx={{ p: { xs: 3, md: 6 }, textAlign: 'center',background:'rgba(21, 10, 63, 0.69)' }}>
           <Typography variant="h2" sx={{ 
             color: 'white',
             fontWeight: 'bold',
@@ -1107,7 +1108,7 @@ const LandingPage = () => {
             onClick={() => navigate(user ? '/dashboard' : '/register')}
             endIcon={<ArrowForwardIcon />}
             sx={{
-              background: 'linear-gradient(135deg, #29164dff 0%, #764ba2 100%)',
+              background: 'linear-gradient(135deg, #1339e0ff 0%, #170d75ff 100%)',
               color: 'white',
               py: 2,
               px: 6,
@@ -1115,7 +1116,7 @@ const LandingPage = () => {
               fontSize: '1.1rem',
               '&:hover': {
                 transform: 'translateY(-3px)',
-                boxShadow: '0 12px 30px rgba(90, 41, 136, 0.6)'
+                boxShadow: '0 12px 30px rgba(26, 14, 190, 0.6)'
               }
             }}
           >
@@ -1127,7 +1128,7 @@ const LandingPage = () => {
       {/* Footer */}
       <Box sx={{ 
         py: 4,
-        background: 'rgba(63, 40, 82, 0.84)',
+        background: 'linear-gradient(135deg, #0305118e 0%, #1c0975c2 100%)',
         borderTop: '1px solid rgba(255, 255, 255, 0.1)'
       }}>
         <Container maxWidth="xl">
@@ -1138,7 +1139,7 @@ const LandingPage = () => {
                   sx={{
                     width: 40,
                     height: 40,
-                    background: 'linear-gradient(135deg, #29164dff 0%, #764ba2 100%)',
+                    background: 'linear-gradient(135deg, #1339e0ff 0%, #170d75ff 100%)',
                     borderRadius: '10px',
                     display: 'flex',
                     alignItems: 'center',
@@ -1223,7 +1224,7 @@ const LandingPage = () => {
                     variant="contained"
                     size="small"
                     sx={{
-                      background: 'linear-gradient(135deg, #29164dff 0%, #764ba2 100%)',
+                      background: 'linear-gradient(135deg, #1339e0ff 0%, #170d75ff 100%)',
                       color: 'white'
                     }}
                   >
