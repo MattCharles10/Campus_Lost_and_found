@@ -16,7 +16,9 @@ import {
   InputAdornment,
   Avatar,
   Stack,
-  Badge
+  Badge,
+  Alert,
+  Snackbar
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -34,7 +36,8 @@ import {
   Visibility as ViewIcon,
   ArrowForward as ArrowForwardIcon,
   CheckCircle as CheckCircleIcon,
-  Warning as WarningIcon
+  Warning as WarningIcon,
+  BugReport as BugReportIcon
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
@@ -42,9 +45,6 @@ import { styled } from '@mui/material/styles';
 import LoadingSpinner from '../common/UI/LoadingSpinner';
 import StatsCard from './cards/StatsCard';
 import WelcomeCard from './WelcomeCard';
-// Remove these imports since we're creating enhanced versions below
-// import RecentItemsCard from './cards/RecentItemsCard';
-// import QuickActionsCard from './cards/QuickActionsCard';
 import ItemForm from '../items/ItemForm';
 
 import { itemService } from '../../services/itemService';
@@ -142,7 +142,7 @@ const EnhancedSectionBox = styled(Box)(({ theme, color }) => ({
   },
 }));
 
-// Enhanced Recent Items Card Component (FIXED)
+// Enhanced Recent Items Card Component
 const EnhancedRecentItemsCard = ({ items = [] }) => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -260,7 +260,7 @@ const EnhancedRecentItemsCard = ({ items = [] }) => {
   );
 };
 
-// Enhanced Quick Actions Component (FIXED)
+// Enhanced Quick Actions Component
 const EnhancedQuickActionsCard = ({ onReportItem }) => {
   const actions = [
     { 
@@ -380,7 +380,7 @@ const EnhancedQuickActionsCard = ({ onReportItem }) => {
   );
 };
 
-// Enhanced Campus Map Component (FIXED)
+// Enhanced Campus Map Component
 const EnhancedCampusMap = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [mapView, setMapView] = useState('heatmap');
@@ -679,6 +679,8 @@ const Dashboard = () => {
   const theme = useTheme();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [apiStatus, setApiStatus] = useState('idle'); // 'idle', 'loading', 'success', 'error'
+  const [apiError, setApiError] = useState('');
   const [stats, setStats] = useState({
     totalItems: 156,
     lostItems: 89,
@@ -728,28 +730,132 @@ const Dashboard = () => {
   const [showItemForm, setShowItemForm] = useState(false);
   const [dateRange, setDateRange] = useState('week');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
+  const [debugLogs, setDebugLogs] = useState([]);
+
+  const addDebugLog = (message, type = 'info') => {
+    const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+    const logEntry = { timestamp, message, type };
+    setDebugLogs(prev => [logEntry, ...prev.slice(0, 9)]); // Keep last 10 logs
+    console.log(`[${timestamp}] ${message}`);
+  };
+
+  const testAPIConnection = async () => {
+    addDebugLog('🧪 Starting API connection test...', 'debug');
+    setApiStatus('loading');
+    
+    try {
+      const token = localStorage.getItem('token');
+      addDebugLog(`🔑 Token exists: ${!!token}`, 'debug');
+      
+      if (!token) {
+        setApiError('No authentication token found. Please log in.');
+        setApiStatus('error');
+        return;
+      }
+      
+      addDebugLog('📡 Testing connection to: http://localhost:8082/api/items', 'debug');
+      
+      const response = await fetch('http://localhost:8082/api/items', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      addDebugLog(`📥 Response status: ${response.status}`, response.ok ? 'success' : 'error');
+      
+      const data = await response.json();
+      addDebugLog(`📊 Response data: ${JSON.stringify(data).substring(0, 100)}...`, 'debug');
+      
+      if (response.ok) {
+        setApiStatus('success');
+        addDebugLog('✅ API connection successful!', 'success');
+        return data;
+      } else {
+        setApiError(data.message || `API returned ${response.status}`);
+        setApiStatus('error');
+        addDebugLog(`❌ API error: ${data.message || response.status}`, 'error');
+        return null;
+      }
+      
+    } catch (error) {
+      setApiError(error.message);
+      setApiStatus('error');
+      addDebugLog(`💥 Fetch error: ${error.message}`, 'error');
+      return null;
+    }
+  };
+
+  const loadDashboardData = async () => {
+    addDebugLog('🔄 Loading dashboard data...', 'info');
+    setApiStatus('loading');
+    
+    try {
+      // Clear previous errors
+      setApiError('');
+      
+      // Step 1: Test direct API connection first
+      const apiTestResult = await testAPIConnection();
+      if (!apiTestResult) {
+        addDebugLog('❌ API test failed, using fallback data', 'warning');
+        setApiStatus('error');
+        return;
+      }
+      
+      // Step 2: Get dashboard stats
+      addDebugLog('📊 Getting dashboard stats...', 'info');
+      const dashboardStats = await itemService.getDashboardStats();
+      addDebugLog(`✅ Dashboard stats loaded: ${dashboardStats.totalItems} total items`, 'success');
+      
+      // Step 3: Get recent items
+      addDebugLog('📦 Getting recent items...', 'info');
+      const items = await itemService.getRecentItems(6);
+      addDebugLog(`✅ Recent items loaded: ${items.length} items`, 'success');
+      
+      // Update state
+      setStats(dashboardStats);
+      setRecentItems(items);
+      setApiStatus('success');
+      addDebugLog('🎉 Dashboard data loaded successfully!', 'success');
+      
+    } catch (error) {
+      console.error('Dashboard data error:', error);
+      setApiError(error.message);
+      setApiStatus('error');
+      addDebugLog(`❌ Failed to load dashboard: ${error.message}`, 'error');
+      
+      // Use fallback data
+      setStats({
+        totalItems: 156,
+        lostItems: 89,
+        foundItems: 67,
+        resolvedCases: 42,
+        activeUsers: 123,
+        responseRate: '85%'
+      });
+    } finally {
+      setLoading(false);
+      addDebugLog('🏁 Loading complete', 'info');
+    }
+  };
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setLoading(true);
-        const [dashboardStats, items] = await Promise.all([
-          itemService.getDashboardStats(dateRange),
-          itemService.getRecentItems(6)
-        ]);
-        
-        setStats(dashboardStats);
-        setRecentItems(items);
-      } catch (error) {
-        console.error('Failed to fetch dashboard data:', error);
-        // Use fallback data already set
-      } finally {
-        setLoading(false);
-      }
+    addDebugLog('🚀 Dashboard component mounted', 'info');
+    addDebugLog(`👤 User: ${user?.name || 'Not logged in'}`, 'info');
+    addDebugLog(`🔧 itemService available: ${!!itemService}`, 'debug');
+    
+    const loadData = async () => {
+      await loadDashboardData();
     };
     
-    fetchDashboardData();
-  }, [dateRange]);
+    loadData();
+    
+    // Cleanup function
+    return () => {
+      addDebugLog('🗑️ Dashboard component unmounting', 'info');
+    };
+  }, []);
 
   if (loading) {
     return <LoadingSpinner fullScreen showText text="Loading dashboard data..." />;
@@ -757,6 +863,119 @@ const Dashboard = () => {
 
   return (
     <DashboardContainer maxWidth="xl">
+      {/* Debug Panel */}
+      {showDebugPanel && (
+        <Box sx={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          width: 400,
+          height: '100vh',
+          bgcolor: 'rgba(0, 0, 0, 0.95)',
+          color: 'white',
+          zIndex: 9999,
+          p: 2,
+          overflow: 'auto',
+          borderLeft: '2px solid #8b5cf6'
+        }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h6" sx={{ color: '#8b5cf6' }}>
+              🐛 Debug Panel
+            </Typography>
+            <IconButton onClick={() => setShowDebugPanel(false)} sx={{ color: 'white' }}>
+              ✕
+            </IconButton>
+          </Box>
+          
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="subtitle2" sx={{ mb: 1, color: '#94a3b8' }}>
+              API Status: 
+              <span style={{ 
+                color: apiStatus === 'success' ? '#10b981' : 
+                       apiStatus === 'error' ? '#ef4444' : 
+                       apiStatus === 'loading' ? '#f59e0b' : '#64748b',
+                marginLeft: 8
+              }}>
+                {apiStatus.toUpperCase()}
+              </span>
+            </Typography>
+            
+            <Button
+              fullWidth
+              variant="contained"
+              startIcon={<BugReportIcon />}
+              onClick={testAPIConnection}
+              sx={{ mb: 2 }}
+            >
+              Test API Connection
+            </Button>
+            
+            <Button
+              fullWidth
+              variant="outlined"
+              startIcon={<RefreshIcon />}
+              onClick={loadDashboardData}
+              sx={{ mb: 2 }}
+            >
+              Reload Dashboard
+            </Button>
+            
+            {apiError && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {apiError}
+              </Alert>
+            )}
+          </Box>
+          
+          <Typography variant="subtitle2" sx={{ mb: 1, color: '#94a3b8' }}>
+            Debug Logs:
+          </Typography>
+          <Box sx={{ maxHeight: 300, overflow: 'auto', bgcolor: 'rgba(255,255,255,0.05)', p: 1, borderRadius: 1 }}>
+            {debugLogs.map((log, index) => (
+              <Box key={index} sx={{ 
+                fontFamily: 'monospace', 
+                fontSize: '0.75rem',
+                color: log.type === 'error' ? '#ef4444' : 
+                       log.type === 'success' ? '#10b981' : 
+                       log.type === 'warning' ? '#f59e0b' : '#94a3b8',
+                mb: 0.5
+              }}>
+                [{log.timestamp}] {log.message}
+              </Box>
+            ))}
+            {debugLogs.length === 0 && (
+              <Typography variant="body2" sx={{ color: '#64748b', fontStyle: 'italic' }}>
+                No debug logs yet
+              </Typography>
+            )}
+          </Box>
+        </Box>
+      )}
+
+      {/* Debug Toggle Button */}
+      <IconButton
+        onClick={() => setShowDebugPanel(!showDebugPanel)}
+        sx={{
+          position: 'fixed',
+          bottom: 120,
+          right: 20,
+          background: '#8b5cf6',
+          color: 'white',
+          width: 56,
+          height: 56,
+          borderRadius: '50%',
+          boxShadow: '0 4px 12px rgba(139, 92, 246, 0.4)',
+          zIndex: 1000,
+          border: '2px solid white',
+          '&:hover': {
+            background: '#7c3aed',
+            transform: 'scale(1.1)',
+          }
+        }}
+      >
+        <BugReportIcon />
+      </IconButton>
+
       {/* Dashboard Header */}
       <MainBox>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
@@ -782,6 +1001,27 @@ const Dashboard = () => {
                 fontSize: '1.1em'
               }}>{user?.name || 'User'}</span>! Track and recover lost items across campus.
             </Typography>
+            
+            {/* API Status Indicator */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+              <Box sx={{ 
+                width: 8, 
+                height: 8, 
+                borderRadius: '50%', 
+                backgroundColor: apiStatus === 'success' ? '#10b981' : 
+                                apiStatus === 'error' ? '#ef4444' : 
+                                apiStatus === 'loading' ? '#f59e0b' : '#64748b'
+              }} />
+              <Typography variant="caption" sx={{ 
+                color: apiStatus === 'success' ? '#059669' : 
+                       apiStatus === 'error' ? '#dc2626' : 
+                       apiStatus === 'loading' ? '#d97706' : '#64748b'
+              }}>
+                {apiStatus === 'success' ? 'Connected to API' : 
+                 apiStatus === 'error' ? 'API Connection Error' : 
+                 apiStatus === 'loading' ? 'Connecting...' : 'API Status'}
+              </Typography>
+            </Box>
           </Box>
           
           <Button
@@ -898,7 +1138,7 @@ const Dashboard = () => {
       <Grid container spacing={3}>
         {/* Left Column */}
         <Grid item xs={12} lg={8}>
-          {/* Recent Activity - FIXED: Using JSX component */}
+          {/* Recent Activity */}
           <MainBox>
             <Box sx={{ 
               display: 'flex', 
@@ -926,6 +1166,9 @@ const Dashboard = () => {
               <Button 
                 variant="contained"
                 endIcon={<ArrowForwardIcon />}
+                onClick={() => {
+                  addDebugLog('View All recent items clicked', 'info');
+                }}
                 sx={{ 
                   background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
                   color: 'white',
@@ -944,11 +1187,10 @@ const Dashboard = () => {
                 View All
               </Button>
             </Box>
-            {/* FIXED: Use JSX component properly */}
             <EnhancedRecentItemsCard items={recentItems} />
           </MainBox>
           
-          {/* Quick Actions - FIXED: Using JSX component */}
+          {/* Quick Actions */}
           <MainBox>
             <Typography variant="h5" sx={{ 
               fontWeight: 900, 
@@ -966,11 +1208,13 @@ const Dashboard = () => {
               }} />
               ⚡ Quick Actions
             </Typography>
-            {/* FIXED: Use JSX component properly */}
-            <EnhancedQuickActionsCard onReportItem={() => setShowItemForm(true)} />
+            <EnhancedQuickActionsCard onReportItem={() => {
+              addDebugLog('Report Item clicked', 'info');
+              setShowItemForm(true);
+            }} />
           </MainBox>
 
-          {/* Campus Map - FIXED: Using JSX component */}
+          {/* Campus Map */}
           <EnhancedCampusMap />
         </Grid>
         
@@ -1157,7 +1401,10 @@ const Dashboard = () => {
 
       {/* Floating Action Button */}
       <IconButton
-        onClick={() => setShowItemForm(true)}
+        onClick={() => {
+          addDebugLog('Report Item FAB clicked', 'info');
+          setShowItemForm(true);
+        }}
         sx={{
           position: 'fixed',
           bottom: 40,
@@ -1232,7 +1479,10 @@ const Dashboard = () => {
                   Report Lost/Found Item
                 </Typography>
                 <IconButton 
-                  onClick={() => setShowItemForm(false)} 
+                  onClick={() => {
+                    addDebugLog('Item form closed', 'info');
+                    setShowItemForm(false);
+                  }} 
                   sx={{ 
                     color: '#ef4444',
                     backgroundColor: '#fee2e2',
@@ -1245,11 +1495,28 @@ const Dashboard = () => {
                   ✕
                 </IconButton>
               </Box>
-              <ItemForm onClose={() => setShowItemForm(false)} />
+              <ItemForm 
+                onClose={() => setShowItemForm(false)} 
+                onSuccess={() => {
+                  addDebugLog('Item created successfully! Reloading dashboard...', 'success');
+                  loadDashboardData();
+                }}
+              />
             </Box>
           </Box>
         </Box>
       )}
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={apiStatus === 'error' && !!apiError}
+        autoHideDuration={6000}
+        onClose={() => setApiError('')}
+      >
+        <Alert severity="error" onClose={() => setApiError('')}>
+          {apiError}
+        </Alert>
+      </Snackbar>
     </DashboardContainer>
   );
 };
