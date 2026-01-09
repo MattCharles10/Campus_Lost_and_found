@@ -1,138 +1,136 @@
 import React, { useState, useEffect } from 'react';
 import {
   Container,
-  Typography,
-  Box,
   Grid,
-  Avatar,
   Card,
   CardContent,
-  Chip,
-  Divider,
+  Typography,
+  Box,
   Button,
+  Avatar,
+  TextField,
+  Divider,
+  Chip,
+  Stack,
   IconButton,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  ListItemSecondaryAction,
-  Paper,
-  LinearProgress,
+  Tab,
+  Tabs,
+  Alert,
+  Switch,
+  FormControlLabel,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
-  InputAdornment,
-  Alert
+  LinearProgress
 } from '@mui/material';
 import {
-  Person as PersonIcon,
-  Email as EmailIcon,
-  School as SchoolIcon,
-  CalendarToday as CalendarIcon,
-  Phone as PhoneIcon,
-  Badge as BadgeIcon,
-  LocationOn as LocationIcon,
-  Category as CategoryIcon,
-  Verified as VerifiedIcon,
-  Lock as LockIcon,
   Edit as EditIcon,
-  History as HistoryIcon,
-  CheckCircle as CheckCircleIcon,
-  Pending as PendingIcon,
-  Security as SecurityIcon,
+  Save as SaveIcon,
+  CameraAlt as CameraIcon,
   Notifications as NotificationsIcon,
-  Password as PasswordIcon,
-  Visibility as VisibilityIcon,
-  VisibilityOff as VisibilityOffIcon,
-  Logout as LogoutIcon
+  Security as SecurityIcon,
+  History as HistoryIcon,
+  TrendingUp,
+  CheckCircle as CheckCircleIcon,
+  Warning as WarningIcon,
+  Email as EmailIcon,
+  Phone as PhoneIcon,
+  LocationOn as LocationIcon,
+  VerifiedUser,
+  Logout as LogoutIcon,
+  Delete as DeleteIcon,
+  ArrowBack as ArrowBackIcon
 } from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
 import { useAuth } from '../context/AuthContext';
-import Snackbar from '@mui/material/Snackbar';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../components/common/UI/LoadingSpinner';
-import GlassCard from '../components/common/UI/GlassCard';
+
+const PageContainer = styled(Container)(({ theme }) => ({
+  paddingTop: theme.spacing(4),
+  paddingBottom: theme.spacing(4),
+  minHeight: '100vh',
+  background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+}));
+
+const ProfileCard = styled(Card)(({ theme }) => ({
+  borderRadius: '20px',
+  border: '3px solid #8b5cf6',
+  boxShadow: '0 20px 50px rgba(139, 92, 246, 0.2)',
+  backgroundColor: 'white',
+  overflow: 'hidden',
+}));
 
 const ProfilePage = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateProfile } = useAuth();
   const navigate = useNavigate();
-  
-  const [loading, setLoading] = useState(true);
-  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
-  
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+  const [activeTab, setActiveTab] = useState(0);
+  const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [profileData, setProfileData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    campusId: '',
+    department: '',
+    year: '',
+    bio: '',
+    notifications: true,
+    emailNotifications: true,
+    smsNotifications: false
   });
-
-  // Mock user stats
-  const userStats = {
-    itemsReported: 8,
-    itemsFound: 5,
-    itemsReturned: 3,
-    successRate: 85,
-    trustScore: 92
-  };
-
-  // Mock recent activity
-  const recentActivity = [
-    { id: 1, action: 'Reported lost laptop', date: '2 days ago', status: 'Active' },
-    { id: 2, action: 'Found student ID', date: '1 week ago', status: 'Returned' },
-    { id: 3, action: 'Updated profile', date: '2 weeks ago', status: 'Completed' },
-  ];
+  const [stats, setStats] = useState({
+    totalItems: 0,
+    resolvedItems: 0,
+    activeItems: 0,
+    successRate: 0,
+    responseTime: '2.4h',
+    communityRating: 4.8
+  });
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
     if (user) {
-      setLoading(false);
+      setProfileData({
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        campusId: user.campusId || '',
+        department: user.department || '',
+        year: user.year || '',
+        bio: user.bio || '',
+        notifications: user.notifications !== false,
+        emailNotifications: user.emailNotifications !== false,
+        smsNotifications: user.smsNotifications || false
+      });
+      fetchUserStats();
     }
   }, [user]);
 
-  const handlePasswordChange = (e) => {
-    const { name, value } = e.target;
-    setPasswordData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  const fetchUserStats = async () => {
+    // Simulate API call
+    setStats({
+      totalItems: 24,
+      resolvedItems: 18,
+      activeItems: 6,
+      successRate: 75,
+      responseTime: '2.4h',
+      communityRating: 4.8
+    });
   };
 
-  const handleChangePassword = () => {
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setSnackbar({
-        open: true,
-        message: 'Passwords do not match',
-        severity: 'error'
-      });
-      return;
+  const handleSaveProfile = async () => {
+    setLoading(true);
+    try {
+      await updateProfile(profileData);
+      setEditMode(false);
+      alert('Profile updated successfully!');
+    } catch (error) {
+      alert('Failed to update profile. Please try again.');
+    } finally {
+      setLoading(false);
     }
-
-    if (passwordData.newPassword.length < 6) {
-      setSnackbar({
-        open: true,
-        message: 'Password must be at least 6 characters',
-        severity: 'error'
-      });
-      return;
-    }
-
-    // Here you would call API to change password
-    console.log('Changing password...');
-    
-    setSnackbar({
-      open: true,
-      message: 'Password changed successfully!',
-      severity: 'success'
-    });
-    
-    setPasswordDialogOpen(false);
-    setPasswordData({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    });
   };
 
   const handleLogout = () => {
@@ -140,538 +138,487 @@ const ProfilePage = () => {
     navigate('/login');
   };
 
-  const getStatusColor = (status) => {
-    switch(status.toLowerCase()) {
-      case 'active':
-      case 'returned':
-        return 'success';
-      case 'pending':
-        return 'warning';
-      case 'completed':
-        return 'info';
-      default:
-        return 'default';
-    }
+  const handleDeleteAccount = () => {
+    // Implement account deletion logic
+    alert('Account deletion feature coming soon!');
+    setShowDeleteDialog(false);
   };
 
-  if (loading || !user) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <LoadingSpinner />
-      </Box>
-    );
+  const tabs = ['Profile', 'Activity', 'Settings', 'Security'];
+
+  if (!user) {
+    return <LoadingSpinner fullScreen text="Loading profile..." />;
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <PageContainer maxWidth="lg">
       {/* Header */}
       <Box sx={{ mb: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-          <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold' }}>
-            My Profile
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate(-1)}
+          sx={{
+            color: '#64748b',
+            mb: 3,
+            borderRadius: '10px',
+            '&:hover': { backgroundColor: '#f1f5f9' }
+          }}
+        >
+          Back to Dashboard
+        </Button>
+
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Typography variant="h3" sx={{ fontWeight: 900, color: '#1e1b4b' }}>
+            👤 My Profile
           </Typography>
-          <Button
-            variant="outlined"
-            startIcon={<LogoutIcon />}
-            onClick={handleLogout}
-            sx={{
-              borderColor: 'rgba(255, 255, 255, 0.3)',
-              color: 'white',
-              '&:hover': {
-                borderColor: 'rgba(255, 255, 255, 0.5)',
-                backgroundColor: 'rgba(255, 255, 255, 0.05)'
-              }
-            }}
-          >
-            Logout
-          </Button>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              variant="outlined"
+              startIcon={editMode ? <SaveIcon /> : <EditIcon />}
+              onClick={editMode ? handleSaveProfile : () => setEditMode(true)}
+              disabled={loading}
+              sx={{
+                borderColor: '#8b5cf6',
+                color: '#8b5cf6',
+                fontWeight: 700,
+                borderRadius: '12px',
+                px: 3
+              }}
+            >
+              {editMode ? 'Save Changes' : 'Edit Profile'}
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<LogoutIcon />}
+              onClick={handleLogout}
+              sx={{
+                borderColor: '#ef4444',
+                color: '#ef4444',
+                fontWeight: 700,
+                borderRadius: '12px',
+                px: 3
+              }}
+            >
+              Logout
+            </Button>
+          </Box>
         </Box>
-        <Typography variant="body1" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-          View your account information and activity
-        </Typography>
       </Box>
 
-      {/* Main Content */}
       <Grid container spacing={3}>
-        {/* Left Column - Profile Card */}
+        {/* Left Column - Profile Info */}
         <Grid item xs={12} md={4}>
-          <GlassCard sx={{ p: 3, height: '100%' }}>
-            {/* Profile Header */}
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
-              <Avatar
-                src={`https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=667eea&color=fff`}
-                sx={{
-                  width: 100,
-                  height: 100,
-                  mb: 2,
-                  border: '3px solid rgba(255, 255, 255, 0.2)'
-                }}
-              />
-              <Typography variant="h5" sx={{ color: 'white', fontWeight: 'bold', textAlign: 'center' }}>
-                {user.firstName} {user.lastName}
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)', mb: 1 }}>
-                {user.email}
-              </Typography>
-              <Chip
-                icon={<VerifiedIcon />}
-                label="Verified Account"
-                size="small"
-                sx={{
-                  background: 'rgba(76, 175, 80, 0.2)',
-                  color: '#4caf50',
-                  mt: 1
-                }}
-              />
-            </Box>
-
-            <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.1)', my: 2 }} />
-
-            {/* User Stats */}
-            <Typography variant="h6" sx={{ color: 'white', mb: 2, fontWeight: 'bold' }}>
-              Your Statistics
-            </Typography>
-            
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Paper sx={{ 
-                  p: 1.5, 
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  borderRadius: 2,
-                  textAlign: 'center'
-                }}>
-                  <Typography variant="h5" sx={{ color: '#667eea', fontWeight: 'bold' }}>
-                    {userStats.itemsReported}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    Reported
-                  </Typography>
-                </Paper>
-              </Grid>
-              <Grid item xs={6}>
-                <Paper sx={{ 
-                  p: 1.5, 
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  borderRadius: 2,
-                  textAlign: 'center'
-                }}>
-                  <Typography variant="h5" sx={{ color: '#4ecdc4', fontWeight: 'bold' }}>
-                    {userStats.itemsReturned}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    Returned
-                  </Typography>
-                </Paper>
-              </Grid>
-            </Grid>
-
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)', mb: 0.5 }}>
-                Success Rate
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <LinearProgress 
-                  variant="determinate" 
-                  value={userStats.successRate}
-                  sx={{ 
-                    flexGrow: 1,
-                    height: 8,
-                    borderRadius: 4,
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    '& .MuiLinearProgress-bar': {
-                      background: 'linear-gradient(90deg, #4ecdc4, #44a08d)',
-                      borderRadius: 4
-                    }
+          <ProfileCard>
+            <CardContent sx={{ p: 4, textAlign: 'center' }}>
+              <Box sx={{ position: 'relative', display: 'inline-block', mb: 3 }}>
+                <Avatar
+                  sx={{
+                    width: 120,
+                    height: 120,
+                    fontSize: '3rem',
+                    backgroundColor: '#8b5cf6',
+                    border: '4px solid white',
+                    boxShadow: '0 10px 30px rgba(139, 92, 246, 0.3)'
                   }}
-                />
-                <Typography variant="body2" sx={{ color: 'white', ml: 1, fontWeight: 'bold' }}>
-                  {userStats.successRate}%
-                </Typography>
-              </Box>
-            </Box>
-
-            <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.1)', my: 2 }} />
-
-            {/* Quick Actions */}
-            <Typography variant="h6" sx={{ color: 'white', mb: 2, fontWeight: 'bold' }}>
-              Account Settings
-            </Typography>
-            
-            <List dense>
-              <ListItem 
-                button 
-                onClick={() => setPasswordDialogOpen(true)}
-                sx={{
-                  borderRadius: 1,
-                  mb: 0.5,
-                  '&:hover': {
-                    background: 'rgba(255, 255, 255, 0.05)'
-                  }
-                }}
-              >
-                <ListItemIcon>
-                  <PasswordIcon sx={{ color: '#667eea' }} />
-                </ListItemIcon>
-                <ListItemText 
-                  primary="Change Password" 
-                  sx={{ color: 'white' }}
-                />
-              </ListItem>
-              
-              <ListItem 
-                button 
-                onClick={() => navigate('/my-items')}
-                sx={{
-                  borderRadius: 1,
-                  mb: 0.5,
-                  '&:hover': {
-                    background: 'rgba(255, 255, 255, 0.05)'
-                  }
-                }}
-              >
-                <ListItemIcon>
-                  <HistoryIcon sx={{ color: '#4ecdc4' }} />
-                </ListItemIcon>
-                <ListItemText 
-                  primary="My Reported Items" 
-                  sx={{ color: 'white' }}
-                />
-              </ListItem>
-            </List>
-          </GlassCard>
-        </Grid>
-
-        {/* Right Column - Details */}
-        <Grid item xs={12} md={8}>
-          <Grid container spacing={3}>
-            {/* Personal Information Card */}
-            <Grid item xs={12}>
-              <Card sx={{ 
-                background: 'rgba(255, 255, 255, 0.05)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)'
-              }}>
-                <CardContent>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                    <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
-                      Personal Information
-                    </Typography>
-                    <Chip
-                      label="Registered"
-                      color="primary"
-                      size="small"
-                      sx={{ fontWeight: 'medium' }}
-                    />
-                  </Box>
-                  
-                  <Grid container spacing={3}>
-                    {/* Personal Info */}
-                    <Grid item xs={12} md={6}>
-                      <List dense>
-                        <ListItem sx={{ px: 0 }}>
-                          <ListItemIcon sx={{ minWidth: 40 }}>
-                            <PersonIcon sx={{ color: '#667eea' }} />
-                          </ListItemIcon>
-                          <ListItemText 
-                            primary="Name"
-                            secondary={`${user.firstName} ${user.lastName}`}
-                            primaryTypographyProps={{ 
-                              variant: 'body2',
-                              sx: { color: 'rgba(255, 255, 255, 0.7)' }
-                            }}
-                            secondaryTypographyProps={{ 
-                              variant: 'body1',
-                              sx: { color: 'white', fontWeight: 'medium' }
-                            }}
-                          />
-                        </ListItem>
-                        
-                        <ListItem sx={{ px: 0 }}>
-                          <ListItemIcon sx={{ minWidth: 40 }}>
-                            <EmailIcon sx={{ color: '#4ecdc4' }} />
-                          </ListItemIcon>
-                          <ListItemText 
-                            primary="Email"
-                            secondary={user.email}
-                            primaryTypographyProps={{ 
-                              variant: 'body2',
-                              sx: { color: 'rgba(255, 255, 255, 0.7)' }
-                            }}
-                            secondaryTypographyProps={{ 
-                              variant: 'body1',
-                              sx: { color: 'white', fontWeight: 'medium' }
-                            }}
-                          />
-                        </ListItem>
-                        
-                        {user.studentId && (
-                          <ListItem sx={{ px: 0 }}>
-                            <ListItemIcon sx={{ minWidth: 40 }}>
-                              <BadgeIcon sx={{ color: '#ffd166' }} />
-                            </ListItemIcon>
-                            <ListItemText 
-                              primary="Student ID"
-                              secondary={user.studentId}
-                              primaryTypographyProps={{ 
-                                variant: 'body2',
-                                sx: { color: 'rgba(255, 255, 255, 0.7)' }
-                              }}
-                              secondaryTypographyProps={{ 
-                                variant: 'body1',
-                                sx: { color: 'white', fontWeight: 'medium' }
-                              }}
-                            />
-                          </ListItem>
-                        )}
-                      </List>
-                    </Grid>
-                    
-                    {/* Account Info */}
-                    <Grid item xs={12} md={6}>
-                      <List dense>
-                        <ListItem sx={{ px: 0 }}>
-                          <ListItemIcon sx={{ minWidth: 40 }}>
-                            <CalendarIcon sx={{ color: '#96ceb4' }} />
-                          </ListItemIcon>
-                          <ListItemText 
-                            primary="Member Since"
-                            secondary={user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
-                            primaryTypographyProps={{ 
-                              variant: 'body2',
-                              sx: { color: 'rgba(255, 255, 255, 0.7)' }
-                            }}
-                            secondaryTypographyProps={{ 
-                              variant: 'body1',
-                              sx: { color: 'white', fontWeight: 'medium' }
-                            }}
-                          />
-                        </ListItem>
-                        
-                        <ListItem sx={{ px: 0 }}>
-                          <ListItemIcon sx={{ minWidth: 40 }}>
-                            <SecurityIcon sx={{ color: '#ff6b6b' }} />
-                          </ListItemIcon>
-                          <ListItemText 
-                            primary="Account Type"
-                            secondary="Standard User"
-                            primaryTypographyProps={{ 
-                              variant: 'body2',
-                              sx: { color: 'rgba(255, 255, 255, 0.7)' }
-                            }}
-                            secondaryTypographyProps={{ 
-                              variant: 'body1',
-                              sx: { color: 'white', fontWeight: 'medium' }
-                            }}
-                          />
-                        </ListItem>
-                        
-                        <ListItem sx={{ px: 0 }}>
-                          <ListItemIcon sx={{ minWidth: 40 }}>
-                            <NotificationsIcon sx={{ color: '#a267ac' }} />
-                          </ListItemIcon>
-                          <ListItemText 
-                            primary="Notifications"
-                            secondary="Email enabled"
-                            primaryTypographyProps={{ 
-                              variant: 'body2',
-                              sx: { color: 'rgba(255, 255, 255, 0.7)' }
-                            }}
-                            secondaryTypographyProps={{ 
-                              variant: 'body1',
-                              sx: { color: 'white', fontWeight: 'medium' }
-                            }}
-                          />
-                        </ListItem>
-                      </List>
-                    </Grid>
-                  </Grid>
-                  
-                  <Alert 
-                    severity="info" 
-                    sx={{ 
-                      mt: 2,
-                      background: 'rgba(33, 150, 243, 0.1)',
+                >
+                  {user.name?.charAt(0).toUpperCase() || 'U'}
+                </Avatar>
+                {editMode && (
+                  <IconButton
+                    sx={{
+                      position: 'absolute',
+                      bottom: 0,
+                      right: 0,
+                      backgroundColor: '#8b5cf6',
                       color: 'white',
-                      border: '1px solid rgba(33, 150, 243, 0.3)',
+                      '&:hover': { backgroundColor: '#7c3aed' }
                     }}
                   >
-                    To update your personal information, please contact support.
-                  </Alert>
-                </CardContent>
-              </Card>
-            </Grid>
+                    <CameraIcon />
+                  </IconButton>
+                )}
+              </Box>
 
-            {/* Recent Activity Card */}
-            <Grid item xs={12}>
-              <Card sx={{ 
-                background: 'rgba(255, 255, 255, 0.05)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)'
-              }}>
-                <CardContent>
-                  <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold', mb: 3 }}>
-                    Recent Activity
+              <Typography variant="h5" sx={{ fontWeight: 900, color: '#1e1b4b', mb: 1 }}>
+                {user.name}
+              </Typography>
+              
+              <Stack direction="row" spacing={1} justifyContent="center" sx={{ mb: 3 }}>
+                <Chip 
+                  icon={<VerifiedUser sx={{ fontSize: 14 }} />}
+                  label="Verified User"
+                  size="small"
+                  sx={{ 
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    color: '#065f46',
+                    fontWeight: 600
+                  }}
+                />
+                <Chip 
+                  label="Active"
+                  size="small"
+                  sx={{ 
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    color: '#1d4ed8',
+                    fontWeight: 600
+                  }}
+                />
+              </Stack>
+
+              <Divider sx={{ my: 3 }} />
+
+              {/* Quick Stats */}
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography variant="h4" sx={{ fontWeight: 900, color: '#8b5cf6' }}>
+                      {stats.totalItems}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#64748b' }}>
+                      Items Reported
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography variant="h4" sx={{ fontWeight: 900, color: '#10b981' }}>
+                      {stats.resolvedItems}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#64748b' }}>
+                      Resolved
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography variant="h4" sx={{ fontWeight: 900, color: '#f59e0b' }}>
+                      {stats.successRate}%
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#64748b' }}>
+                      Success Rate
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography variant="h4" sx={{ fontWeight: 900, color: '#06b6d4' }}>
+                      {stats.communityRating}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#64748b' }}>
+                      Rating
+                    </Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </ProfileCard>
+
+          {/* Verification Status */}
+          <Card sx={{ mt: 3, borderRadius: '16px', border: '3px solid #e2e8f0' }}>
+            <CardContent sx={{ p: 3 }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e1b4b', mb: 2 }}>
+                🔒 Verification Status
+              </Typography>
+              <Stack spacing={2}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography variant="body2" sx={{ color: '#475569' }}>
+                    Email Verification
                   </Typography>
-                  
-                  <List>
-                    {recentActivity.map((activity) => (
-                      <ListItem 
-                        key={activity.id}
-                        sx={{ 
-                          px: 0,
-                          py: 1.5,
-                          '&:not(:last-child)': {
-                            borderBottom: '1px solid rgba(255, 255, 255, 0.05)'
-                          }
-                        }}
-                      >
-                        <ListItemIcon>
-                          {activity.status === 'Returned' || activity.status === 'Completed' ? (
-                            <CheckCircleIcon sx={{ color: '#4caf50' }} />
-                          ) : (
-                            <PendingIcon sx={{ color: '#ff9800' }} />
-                          )}
-                        </ListItemIcon>
-                        <ListItemText 
-                          primary={activity.action}
-                          secondary={activity.date}
-                          primaryTypographyProps={{ 
-                            variant: 'body1',
-                            sx: { color: 'white' }
-                          }}
-                          secondaryTypographyProps={{ 
-                            variant: 'body2',
-                            sx: { color: 'rgba(255, 255, 255, 0.6)' }
+                  <CheckCircleIcon sx={{ color: '#10b981' }} />
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography variant="body2" sx={{ color: '#475569' }}>
+                    Campus ID Verified
+                  </Typography>
+                  <CheckCircleIcon sx={{ color: '#10b981' }} />
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography variant="body2" sx={{ color: '#475569' }}>
+                    Phone Number
+                  </Typography>
+                  <WarningIcon sx={{ color: '#f59e0b' }} />
+                </Box>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Right Column - Tabs Content */}
+        <Grid item xs={12} md={8}>
+          <Card sx={{ borderRadius: '20px', border: '3px solid #e2e8f0' }}>
+            <Tabs
+              value={activeTab}
+              onChange={(e, newValue) => setActiveTab(newValue)}
+              sx={{
+                borderBottom: '1px solid #e2e8f0',
+                '& .MuiTab-root': {
+                  fontWeight: 700,
+                  textTransform: 'none',
+                  fontSize: '1rem',
+                  py: 2
+                }
+              }}
+            >
+              {tabs.map((tab, index) => (
+                <Tab key={tab} label={tab} />
+              ))}
+            </Tabs>
+
+            <CardContent sx={{ p: 4 }}>
+              {activeTab === 0 && (
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label="Full Name"
+                      value={profileData.name}
+                      onChange={(e) => setProfileData({...profileData, name: e.target.value})}
+                      disabled={!editMode}
+                      sx={{ mb: 3 }}
+                    />
+                    <TextField
+                      fullWidth
+                      label="Email"
+                      value={profileData.email}
+                      disabled
+                      sx={{ mb: 3 }}
+                      InputProps={{
+                        startAdornment: <EmailIcon sx={{ color: '#64748b', mr: 1 }} />
+                      }}
+                    />
+                    <TextField
+                      fullWidth
+                      label="Phone Number"
+                      value={profileData.phone}
+                      onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
+                      disabled={!editMode}
+                      sx={{ mb: 3 }}
+                      InputProps={{
+                        startAdornment: <PhoneIcon sx={{ color: '#64748b', mr: 1 }} />
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label="Campus ID"
+                      value={profileData.campusId}
+                      onChange={(e) => setProfileData({...profileData, campusId: e.target.value})}
+                      disabled={!editMode}
+                      sx={{ mb: 3 }}
+                    />
+                    <TextField
+                      fullWidth
+                      label="Department"
+                      value={profileData.department}
+                      onChange={(e) => setProfileData({...profileData, department: e.target.value})}
+                      disabled={!editMode}
+                      sx={{ mb: 3 }}
+                    />
+                    <TextField
+                      fullWidth
+                      label="Year"
+                      value={profileData.year}
+                      onChange={(e) => setProfileData({...profileData, year: e.target.value})}
+                      disabled={!editMode}
+                      sx={{ mb: 3 }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      multiline
+                      rows={4}
+                      label="Bio"
+                      value={profileData.bio}
+                      onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
+                      disabled={!editMode}
+                      placeholder="Tell us a bit about yourself..."
+                    />
+                  </Grid>
+                </Grid>
+              )}
+
+              {activeTab === 1 && (
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e1b4b', mb: 3 }}>
+                    📊 Activity Overview
+                  </Typography>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} md={6}>
+                      <Card sx={{ p: 3, backgroundColor: '#f8fafc', border: '2px solid #e2e8f0' }}>
+                        <Typography variant="subtitle2" sx={{ color: '#64748b', mb: 2 }}>
+                          Item Resolution Rate
+                        </Typography>
+                        <LinearProgress 
+                          variant="determinate" 
+                          value={stats.successRate} 
+                          sx={{ 
+                            height: 10,
+                            borderRadius: 5,
+                            mb: 2,
+                            backgroundColor: '#e2e8f0',
+                            '& .MuiLinearProgress-bar': {
+                              borderRadius: 5,
+                              backgroundColor: '#10b981'
+                            }
                           }}
                         />
-                        <Chip
-                          label={activity.status}
-                          size="small"
-                          sx={{
-                            backgroundColor: getStatusColor(activity.status) === 'success' ? 'rgba(76, 175, 80, 0.2)' :
-                                            getStatusColor(activity.status) === 'warning' ? 'rgba(255, 152, 0, 0.2)' :
-                                            'rgba(33, 150, 243, 0.2)',
-                            color: getStatusColor(activity.status) === 'success' ? '#4caf50' :
-                                  getStatusColor(activity.status) === 'warning' ? '#ff9800' :
-                                  '#2196f3',
-                            fontWeight: 'medium',
-                            fontSize: '0.75rem'
-                          }}
+                        <Typography variant="body2" sx={{ color: '#475569' }}>
+                          Better than 85% of users
+                        </Typography>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <Card sx={{ p: 3, backgroundColor: '#f8fafc', border: '2px solid #e2e8f0' }}>
+                        <Typography variant="subtitle2" sx={{ color: '#64748b', mb: 2 }}>
+                          Average Response Time
+                        </Typography>
+                        <Typography variant="h3" sx={{ fontWeight: 900, color: '#8b5cf6', mb: 1 }}>
+                          {stats.responseTime}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: '#475569' }}>
+                          Faster than campus average
+                        </Typography>
+                      </Card>
+                    </Grid>
+                  </Grid>
+                </Box>
+              )}
+
+              {activeTab === 2 && (
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e1b4b', mb: 3 }}>
+                    ⚙️ Notification Settings
+                  </Typography>
+                  <Stack spacing={3}>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={profileData.notifications}
+                          onChange={(e) => setProfileData({...profileData, notifications: e.target.checked})}
+                          color="primary"
                         />
-                      </ListItem>
-                    ))}
-                  </List>
-                  
-                  <Box sx={{ textAlign: 'center', mt: 2 }}>
+                      }
+                      label="Push Notifications"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={profileData.emailNotifications}
+                          onChange={(e) => setProfileData({...profileData, emailNotifications: e.target.checked})}
+                          color="primary"
+                        />
+                      }
+                      label="Email Notifications"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={profileData.smsNotifications}
+                          onChange={(e) => setProfileData({...profileData, smsNotifications: e.target.checked})}
+                          color="primary"
+                        />
+                      }
+                      label="SMS Notifications"
+                    />
+                  </Stack>
+                </Box>
+              )}
+
+              {activeTab === 3 && (
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e1b4b', mb: 3 }}>
+                    🔐 Security Settings
+                  </Typography>
+                  <Stack spacing={3}>
                     <Button
-                      onClick={() => navigate('/my-items')}
+                      variant="outlined"
+                      startIcon={<SecurityIcon />}
+                      onClick={() => navigate('/change-password')}
                       sx={{
-                        color: '#667eea',
-                        '&:hover': {
-                          backgroundColor: 'rgba(102, 126, 234, 0.1)'
-                        }
+                        borderColor: '#06b6d4',
+                        color: '#06b6d4',
+                        justifyContent: 'flex-start',
+                        py: 1.5
                       }}
                     >
-                      View All Activity
+                      Change Password
                     </Button>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
+                    <Button
+                      variant="outlined"
+                      startIcon={<HistoryIcon />}
+                      onClick={() => navigate('/login-history')}
+                      sx={{
+                        borderColor: '#8b5cf6',
+                        color: '#8b5cf6',
+                        justifyContent: 'flex-start',
+                        py: 1.5
+                      }}
+                    >
+                      Login History
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      startIcon={<DeleteIcon />}
+                      onClick={() => setShowDeleteDialog(true)}
+                      sx={{
+                        borderColor: '#ef4444',
+                        color: '#ef4444',
+                        justifyContent: 'flex-start',
+                        py: 1.5
+                      }}
+                    >
+                      Delete Account
+                    </Button>
+                  </Stack>
+                </Box>
+              )}
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
 
-      {/* Password Change Dialog */}
-      <Dialog 
-        open={passwordDialogOpen} 
-        onClose={() => setPasswordDialogOpen(false)}
-        PaperProps={{
-          sx: {
-            background: 'rgba(30, 30, 40, 0.95)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
-          }
-        }}
+      {/* Delete Account Dialog */}
+      <Dialog
+        open={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        maxWidth="sm"
+        fullWidth
       >
-        <DialogTitle sx={{ color: 'white', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
-          Change Password
+        <DialogTitle>
+          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+            Delete Account
+          </Typography>
         </DialogTitle>
-        <DialogContent sx={{ pt: 3 }}>
-          <TextField
-            fullWidth
-            label="Current Password"
-            name="currentPassword"
-            type={showPassword ? 'text' : 'password'}
-            value={passwordData.currentPassword}
-            onChange={handlePasswordChange}
-            sx={{ mb: 2 }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
-                    sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
-                  >
-                    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                  </IconButton>
-                </InputAdornment>
-              )
-            }}
-          />
-          <TextField
-            fullWidth
-            label="New Password"
-            name="newPassword"
-            type={showPassword ? 'text' : 'password'}
-            value={passwordData.newPassword}
-            onChange={handlePasswordChange}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="Confirm New Password"
-            name="confirmPassword"
-            type={showPassword ? 'text' : 'password'}
-            value={passwordData.confirmPassword}
-            onChange={handlePasswordChange}
-          />
+        <DialogContent>
+          <Alert severity="error" sx={{ mb: 2, borderRadius: '8px' }}>
+            This action cannot be undone. All your data will be permanently deleted.
+          </Alert>
+          <Typography variant="body2" sx={{ color: '#64748b' }}>
+            Please confirm you want to delete your account. You will lose:
+          </Typography>
+          <ul style={{ color: '#64748b', marginLeft: '20px', marginTop: '10px' }}>
+            <li>All your reported items</li>
+            <li>Chat history</li>
+            <li>Profile information</li>
+            <li>Account settings</li>
+          </ul>
         </DialogContent>
-        <DialogActions sx={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)', p: 2 }}>
-          <Button 
-            onClick={() => setPasswordDialogOpen(false)}
-            sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
-          >
+        <DialogActions>
+          <Button onClick={() => setShowDeleteDialog(false)}>
             Cancel
           </Button>
           <Button
-            onClick={handleChangePassword}
             variant="contained"
-            sx={{
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              color: 'white'
-            }}
+            color="error"
+            onClick={handleDeleteAccount}
           >
-            Change Password
+            Delete Account
           </Button>
         </DialogActions>
       </Dialog>
-
-      {/* Snackbar for notifications */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-      >
-        <Alert 
-          severity={snackbar.severity}
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </Container>
+    </PageContainer>
   );
 };
 

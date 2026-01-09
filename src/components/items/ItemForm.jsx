@@ -32,77 +32,61 @@ import { styled } from '@mui/material/styles';
 import { itemService } from '../../services/itemService';
 import { useAuth } from '../../context/AuthContext';
 
-// UPDATED StyledPaper with forced text colors
+// FIXED StyledPaper - removed problematic global styles
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
   borderRadius: theme.spacing(3),
   backgroundColor: '#ffffff',
   boxShadow: '0 20px 60px rgba(0, 0, 0, 0.1)',
   
-  // Force text colors to be visible
-  '& *': {
-    color: '#1e1b4b !important',
-  },
-  
+  // Only style direct children, not everything
   '& .MuiInputBase-input': {
-    color: '#1e1b4b !important',
+    color: '#1e1b4b',
   },
   
   '& .MuiInputLabel-root': {
-    color: '#64748b !important',
+    color: '#64748b',
     '&.Mui-focused': {
-      color: '#8b5cf6 !important',
+      color: '#8b5cf6',
     }
   },
   
   '& .MuiOutlinedInput-root': {
-    backgroundColor: '#ffffff !important',
+    backgroundColor: '#ffffff',
     '& fieldset': {
-      borderColor: '#cbd5e1 !important',
+      borderColor: '#cbd5e1',
       borderWidth: '2px',
     },
     '&:hover fieldset': {
-      borderColor: '#8b5cf6 !important',
+      borderColor: '#8b5cf6',
     },
     '&.Mui-focused fieldset': {
-      borderColor: '#8b5cf6 !important',
+      borderColor: '#8b5cf6',
       boxShadow: '0 0 0 3px rgba(139, 92, 246, 0.1)',
     }
   },
   
   '& .MuiSelect-select': {
-    backgroundColor: '#ffffff !important',
-  },
-  
-  '& .MuiMenuItem-root': {
-    color: '#1e1b4b !important',
-    backgroundColor: '#ffffff !important',
-    '&:hover': {
-      backgroundColor: '#f5f3ff !important',
-    }
-  },
-  
-  '& .MuiChip-root': {
-    color: '#1e1b4b !important',
+    backgroundColor: '#ffffff',
   },
   
   '& .MuiFormHelperText-root': {
-    color: '#64748b !important',
+    color: '#64748b',
   },
   
   '& .MuiTypography-root': {
-    color: '#1e1b4b !important',
+    color: '#1e1b4b',
   },
   
   '& .MuiAlert-root': {
-    backgroundColor: '#f8fafc !important',
+    backgroundColor: '#f8fafc',
     '& .MuiAlert-icon': {
-      color: '#1e1b4b !important',
+      color: '#1e1b4b',
     }
   },
   
   '& .MuiDivider-root': {
-    borderColor: '#e2e8f0 !important',
+    borderColor: '#e2e8f0',
   }
 }));
 
@@ -118,14 +102,6 @@ const UploadArea = styled(Box)(({ theme }) => ({
     backgroundColor: 'rgba(139, 92, 246, 0.1)',
     borderColor: '#7c3aed',
   },
-  
-  // Force text colors inside upload area
-  '& .MuiTypography-root': {
-    color: '#1e1b4b !important',
-  },
-  '& .MuiSvgIcon-root': {
-    color: '#8b5cf6 !important',
-  }
 }));
 
 const PreviewImage = styled(Box)(({ theme }) => ({
@@ -158,26 +134,34 @@ const ItemForm = ({ onClose, initialData }) => {
     tags: [],
     location: '',
     date: new Date().toISOString().split('T')[0],
-    type: 'lost',
+    type: 'LOST',
     images: [],
     contactNumber: '',
     contactEmail: user?.email || '',
+    // Additional fields for backend
+    campusZone: '',
+    building: '',
+    color: '',
+    brand: '',
+    model: '',
+    serialNumber: '',
+    status: 'ACTIVE'
   });
 
   const [tagInput, setTagInput] = useState('');
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
 
-  // Categories
+  // Categories - uppercase for backend
   const categories = [
-    { value: 'electronics', label: 'Electronics', icon: '📱' },
-    { value: 'documents', label: 'Documents', icon: '📄' },
-    { value: 'clothing', label: 'Clothing', icon: '👕' },
-    { value: 'accessories', label: 'Accessories', icon: '👜' },
-    { value: 'books', label: 'Books & Stationery', icon: '📚' },
-    { value: 'valuables', label: 'Valuables', icon: '💎' },
-    { value: 'keys', label: 'Keys', icon: '🔑' },
-    { value: 'other', label: 'Other', icon: '📦' },
+    { value: 'ELECTRONICS', label: 'Electronics', icon: '📱' },
+    { value: 'DOCUMENTS', label: 'Documents', icon: '📄' },
+    { value: 'CLOTHING', label: 'Clothing', icon: '👕' },
+    { value: 'ACCESSORIES', label: 'Accessories', icon: '👜' },
+    { value: 'BOOKS', label: 'Books & Stationery', icon: '📚' },
+    { value: 'VALUABLES', label: 'Valuables', icon: '💎' },
+    { value: 'KEYS', label: 'Keys', icon: '🔑' },
+    { value: 'OTHER', label: 'Other', icon: '📦' },
   ];
 
   // Common tags
@@ -302,27 +286,40 @@ const ItemForm = ({ onClose, initialData }) => {
     setLoading(true);
 
     try {
-      // Prepare form data for submission
-      const submissionData = new FormData();
-      submissionData.append('title', formData.title);
-      submissionData.append('description', formData.description);
-      submissionData.append('category', formData.category);
-      submissionData.append('tags', JSON.stringify(formData.tags));
-      submissionData.append('location', formData.location);
-      submissionData.append('date', formData.date);
-      submissionData.append('type', formData.type);
-      submissionData.append('contactNumber', formData.contactNumber);
-      submissionData.append('contactEmail', formData.contactEmail);
-
-      // Append images
-      selectedFiles.forEach((file, index) => {
-        submissionData.append(`images`, file);
-      });
-
-      // Call the API service
-      const response = await itemService.createItem(submissionData);
+      console.log('📦 Creating item with data:', formData);
+      console.log('👤 Current user:', user);
       
-      setSuccess('Item reported successfully! It will appear in listings shortly.');
+      // Prepare JSON data for Spring Boot backend
+      // FIXED: Send ONLY the fields that match your Item entity
+      const submissionData = {
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        category: formData.category,
+        type: formData.type,
+        location: formData.location,
+        lostFoundDate: formData.date + 'T00:00:00.000Z',
+        campusZone: 'ACADEMIC',
+        building: formData.building || formData.location,
+        color: formData.color || null,
+        brand: formData.brand || null,
+        model: formData.model || null,
+        serialNumber: formData.serialNumber || null,
+        status: 'ACTIVE',
+        // FIXED: Send user as an object with ONLY the ID (Spring Boot will fetch the full User entity)
+        user: {
+          id: user?.id || 8 // Use the actual user ID from your data (8)
+        }
+      };
+      
+      console.log('📤 Sending item data to backend:', JSON.stringify(submissionData, null, 2));
+      console.log('ℹ️ Note: Backend needs to handle user lookup by ID');
+
+      // Call the API service with JSON data
+      const createdItem = await itemService.createItem(submissionData);
+      
+      console.log('✅ Item created successfully:', createdItem);
+      
+      setSuccess(`${formData.type === 'LOST' ? 'Lost' : 'Found'} item reported successfully!`);
       
       // Reset form after successful submission
       setTimeout(() => {
@@ -330,7 +327,26 @@ const ItemForm = ({ onClose, initialData }) => {
       }, 2000);
 
     } catch (err) {
-      setError(err.message || 'Failed to submit item. Please try again.');
+      console.error('❌ Error creating item:', err);
+      
+      // Provide more helpful error messages
+      if (err.message.includes('user_id')) {
+        setError(`
+          User ID Error: The backend needs to know which user is creating the item.
+          
+          Solutions:
+          1. Make sure you are logged in (check if token exists)
+          2. Backend needs to extract user from JWT token
+          3. Or backend needs to accept user in request body
+          
+          Current user ID from your data: ${user?.id || 'Not found'}
+          Trying to send user: { id: ${user?.id || 8} }
+        `);
+      } else if (err.message.includes('500')) {
+        setError('Server error: Check Spring Boot console for detailed error. The backend might need a different user object format.');
+      } else {
+        setError(err.message || 'Failed to submit item. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -344,38 +360,38 @@ const ItemForm = ({ onClose, initialData }) => {
           color: '#1e1b4b',
           mb: 3
         }}>
-          {formData.type === 'lost' ? 'Report Lost Item' : 'Report Found Item'}
+          {formData.type === 'LOST' ? 'Report Lost Item' : 'Report Found Item'}
         </Typography>
 
         <Box sx={{ mb: 3 }}>
           <Button
-            variant={formData.type === 'lost' ? 'contained' : 'outlined'}
-            onClick={() => setFormData(prev => ({ ...prev, type: 'lost' }))}
+            variant={formData.type === 'LOST' ? 'contained' : 'outlined'}
+            onClick={() => setFormData(prev => ({ ...prev, type: 'LOST' }))}
             sx={{ 
               mr: 2,
               borderRadius: 2,
               fontWeight: 600,
-              backgroundColor: formData.type === 'lost' ? '#ef4444' : 'transparent',
-              color: formData.type === 'lost' ? 'white' : '#ef4444',
+              backgroundColor: formData.type === 'LOST' ? '#ef4444' : 'transparent',
+              color: formData.type === 'LOST' ? 'white' : '#ef4444',
               borderColor: '#ef4444',
               '&:hover': {
-                backgroundColor: formData.type === 'lost' ? '#dc2626' : 'rgba(239, 68, 68, 0.1)',
+                backgroundColor: formData.type === 'LOST' ? '#dc2626' : 'rgba(239, 68, 68, 0.1)',
               }
             }}
           >
             Lost Item
           </Button>
           <Button
-            variant={formData.type === 'found' ? 'contained' : 'outlined'}
-            onClick={() => setFormData(prev => ({ ...prev, type: 'found' }))}
+            variant={formData.type === 'FOUND' ? 'contained' : 'outlined'}
+            onClick={() => setFormData(prev => ({ ...prev, type: 'FOUND' }))}
             sx={{ 
               borderRadius: 2,
               fontWeight: 600,
-              backgroundColor: formData.type === 'found' ? '#10b981' : 'transparent',
-              color: formData.type === 'found' ? 'white' : '#10b981',
+              backgroundColor: formData.type === 'FOUND' ? '#10b981' : 'transparent',
+              color: formData.type === 'FOUND' ? 'white' : '#10b981',
               borderColor: '#10b981',
               '&:hover': {
-                backgroundColor: formData.type === 'found' ? '#059669' : 'rgba(16, 185, 129, 0.1)',
+                backgroundColor: formData.type === 'FOUND' ? '#059669' : 'rgba(16, 185, 129, 0.1)',
               }
             }}
           >
@@ -384,13 +400,13 @@ const ItemForm = ({ onClose, initialData }) => {
         </Box>
 
         {error && (
-          <Alert severity="error" sx={{ mb: 3, backgroundColor: '#fef2f2', color: '#b91c1c !important' }}>
+          <Alert severity="error" sx={{ mb: 3, backgroundColor: '#fef2f2', color: '#b91c1c' }}>
             {error}
           </Alert>
         )}
 
         {success && (
-          <Alert severity="success" sx={{ mb: 3, backgroundColor: '#f0fdf4', color: '#065f46 !important' }}>
+          <Alert severity="success" sx={{ mb: 3, backgroundColor: '#f0fdf4', color: '#065f46' }}>
             {success}
           </Alert>
         )}
@@ -421,14 +437,9 @@ const ItemForm = ({ onClose, initialData }) => {
                 variant="outlined"
                 sx={{ mb: 3 }}
                 required
-                InputProps={{
-                  sx: {
-                    color: '#1e1b4b !important',
-                  }
-                }}
                 InputLabelProps={{
                   sx: {
-                    color: '#64748b !important',
+                    color: '#64748b',
                   }
                 }}
               />
@@ -445,29 +456,40 @@ const ItemForm = ({ onClose, initialData }) => {
                 variant="outlined"
                 sx={{ mb: 3 }}
                 required
-                InputProps={{
-                  sx: {
-                    color: '#1e1b4b !important',
-                  }
-                }}
                 InputLabelProps={{
                   sx: {
-                    color: '#64748b !important',
+                    color: '#64748b',
                   }
                 }}
               />
 
+              {/* Category Field */}
               <FormControl fullWidth sx={{ mb: 3 }}>
-                <InputLabel sx={{ color: '#64748b !important' }}>Category *</InputLabel>
+                <InputLabel 
+                  sx={{ 
+                    color: '#1e1b4b',
+                  }}
+                >
+                  Category *
+                </InputLabel>
                 <Select
                   name="category"
                   value={formData.category}
                   onChange={handleInputChange}
                   label="Category *"
                   required
-                  sx={{
-                    color: '#1e1b4b !important',
-                    backgroundColor: '#ffffff !important',
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        backgroundColor: '#ffffff',
+                        '& .MuiMenuItem-root': {
+                          color: '#1e1b4b',
+                          '&:hover': {
+                            backgroundColor: '#f5f3ff',
+                          }
+                        }
+                      }
+                    }
                   }}
                 >
                   {categories.map((cat) => (
@@ -479,10 +501,78 @@ const ItemForm = ({ onClose, initialData }) => {
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText sx={{ color: '#64748b !important' }}>Select the most appropriate category</FormHelperText>
+                <FormHelperText sx={{ color: '#64748b' }}>Select the most appropriate category</FormHelperText>
               </FormControl>
 
-              <Divider sx={{ my: 3, borderColor: '#e2e8f0 !important' }} />
+              {/* Additional Details */}
+              <Grid container spacing={2} sx={{ mb: 3 }}>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    label="Color"
+                    name="color"
+                    value={formData.color}
+                    onChange={handleInputChange}
+                    placeholder="e.g., Black, Silver"
+                    variant="outlined"
+                    InputLabelProps={{
+                      sx: {
+                        color: '#64748b',
+                      }
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    label="Brand"
+                    name="brand"
+                    value={formData.brand}
+                    onChange={handleInputChange}
+                    placeholder="e.g., Apple, Samsung"
+                    variant="outlined"
+                    InputLabelProps={{
+                      sx: {
+                        color: '#64748b',
+                      }
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    label="Model"
+                    name="model"
+                    value={formData.model}
+                    onChange={handleInputChange}
+                    placeholder="e.g., iPhone 14"
+                    variant="outlined"
+                    InputLabelProps={{
+                      sx: {
+                        color: '#64748b',
+                      }
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    label="Building"
+                    name="building"
+                    value={formData.building}
+                    onChange={handleInputChange}
+                    placeholder="Building name"
+                    variant="outlined"
+                    InputLabelProps={{
+                      sx: {
+                        color: '#64748b',
+                      }
+                    }}
+                  />
+                </Grid>
+              </Grid>
+
+              <Divider sx={{ my: 3, borderColor: '#e2e8f0' }} />
 
               <Typography variant="h6" gutterBottom sx={{ 
                 fontWeight: 700,
@@ -505,20 +595,15 @@ const ItemForm = ({ onClose, initialData }) => {
                 placeholder="Type and press Enter to add tags"
                 variant="outlined"
                 sx={{ mb: 2 }}
-                InputProps={{
-                  sx: {
-                    color: '#1e1b4b !important',
-                  }
-                }}
                 InputLabelProps={{
                   sx: {
-                    color: '#64748b !important',
+                    color: '#64748b',
                   }
                 }}
               />
 
               <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" color="text.secondary" gutterBottom sx={{ color: '#64748b !important' }}>
+                <Typography variant="body2" color="text.secondary" gutterBottom sx={{ color: '#64748b' }}>
                   Common tags:
                 </Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -530,10 +615,10 @@ const ItemForm = ({ onClose, initialData }) => {
                       onClick={() => handleTagAdd(tag)}
                       sx={{ 
                         cursor: 'pointer',
-                        color: '#1e1b4b !important',
-                        backgroundColor: '#f1f5f9 !important',
+                        color: '#1e1b4b',
+                        backgroundColor: '#f1f5f9',
                         '&:hover': {
-                          backgroundColor: '#e2e8f0 !important',
+                          backgroundColor: '#e2e8f0',
                         }
                       }}
                     />
@@ -543,7 +628,7 @@ const ItemForm = ({ onClose, initialData }) => {
 
               {formData.tags.length > 0 && (
                 <Box sx={{ mb: 3 }}>
-                  <Typography variant="body2" color="text.secondary" gutterBottom sx={{ color: '#64748b !important' }}>
+                  <Typography variant="body2" color="text.secondary" gutterBottom sx={{ color: '#64748b' }}>
                     Selected tags:
                   </Typography>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -555,7 +640,7 @@ const ItemForm = ({ onClose, initialData }) => {
                         onDelete={() => handleTagRemove(tag)}
                         color="primary"
                         variant="outlined"
-                        sx={{ color: '#1e1b4b !important' }}
+                        sx={{ color: '#1e1b4b' }}
                       />
                     ))}
                   </Box>
@@ -577,26 +662,36 @@ const ItemForm = ({ onClose, initialData }) => {
                 Location & Date
               </Typography>
 
+              {/* Location Field */}
               <FormControl fullWidth sx={{ mb: 3 }}>
-                <InputLabel sx={{ color: '#64748b !important' }}>Location *</InputLabel>
+                <InputLabel sx={{ color: '#64748b' }}>Location *</InputLabel>
                 <Select
                   name="location"
                   value={formData.location}
                   onChange={handleInputChange}
                   label="Location *"
                   required
-                  sx={{
-                    color: '#1e1b4b !important',
-                    backgroundColor: '#ffffff !important',
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        backgroundColor: '#ffffff',
+                        '& .MuiMenuItem-root': {
+                          color: '#1e1b4b',
+                          '&:hover': {
+                            backgroundColor: '#f5f3ff',
+                          }
+                        }
+                      }
+                    }
                   }}
                 >
                   {locations.map((loc) => (
-                    <MenuItem key={loc} value={loc} sx={{ color: '#1e1b4b !important' }}>
+                    <MenuItem key={loc} value={loc}>
                       {loc}
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText sx={{ color: '#64748b !important' }}>Where was the item lost/found?</FormHelperText>
+                <FormHelperText sx={{ color: '#64748b' }}>Where was the item lost/found?</FormHelperText>
               </FormControl>
 
               <TextField
@@ -610,15 +705,28 @@ const ItemForm = ({ onClose, initialData }) => {
                 sx={{ mb: 3 }}
                 InputLabelProps={{
                   shrink: true,
-                  sx: { color: '#64748b !important' }
-                }}
-                InputProps={{
-                  sx: { color: '#1e1b4b !important' }
+                  sx: { color: '#64748b' }
                 }}
                 required
               />
 
-              <Divider sx={{ my: 3, borderColor: '#e2e8f0 !important' }} />
+              <TextField
+                fullWidth
+                label="Serial Number (Optional)"
+                name="serialNumber"
+                value={formData.serialNumber}
+                onChange={handleInputChange}
+                placeholder="Unique identification number"
+                variant="outlined"
+                sx={{ mb: 3 }}
+                InputLabelProps={{
+                  sx: {
+                    color: '#64748b',
+                  }
+                }}
+              />
+
+              <Divider sx={{ my: 3, borderColor: '#e2e8f0' }} />
 
               <Typography variant="h6" gutterBottom sx={{ 
                 fontWeight: 700,
@@ -658,7 +766,7 @@ const ItemForm = ({ onClose, initialData }) => {
 
               {imagePreviews.length > 0 && (
                 <Box sx={{ mt: 3 }}>
-                  <Typography variant="body2" color="text.secondary" gutterBottom sx={{ color: '#64748b !important' }}>
+                  <Typography variant="body2" color="text.secondary" gutterBottom sx={{ color: '#64748b' }}>
                     Selected images ({imagePreviews.length}/5):
                   </Typography>
                   <Grid container spacing={2}>
@@ -689,7 +797,7 @@ const ItemForm = ({ onClose, initialData }) => {
                 </Box>
               )}
 
-              <Divider sx={{ my: 3, borderColor: '#e2e8f0 !important' }} />
+              <Divider sx={{ my: 3, borderColor: '#e2e8f0' }} />
 
               <Typography variant="h6" gutterBottom sx={{ 
                 fontWeight: 700,
@@ -703,6 +811,7 @@ const ItemForm = ({ onClose, initialData }) => {
                 Contact Information
               </Typography>
 
+              {/* Contact Email Field */}
               <TextField
                 fullWidth
                 label="Contact Email"
@@ -712,16 +821,23 @@ const ItemForm = ({ onClose, initialData }) => {
                 onChange={handleInputChange}
                 placeholder="Your email address"
                 variant="outlined"
-                sx={{ mb: 2 }}
-                disabled
-                InputProps={{
-                  sx: {
-                    color: '#64748b !important',
+                sx={{ 
+                  mb: 2,
+                  '& .Mui-disabled': {
+                    color: '#1e1b4b !important',
+                    WebkitTextFillColor: '#1e1b4b !important',
                   }
                 }}
                 InputLabelProps={{
                   sx: {
-                    color: '#64748b !important',
+                    color: '#1e1b4b',
+                  }
+                }}
+                InputProps={{
+                  readOnly: true,
+                  sx: {
+                    color: '#1e1b4b',
+                    backgroundColor: '#f8fafc',
                   }
                 }}
               />
@@ -735,19 +851,14 @@ const ItemForm = ({ onClose, initialData }) => {
                 placeholder="Phone number for contact"
                 variant="outlined"
                 sx={{ mb: 3 }}
-                InputProps={{
-                  sx: {
-                    color: '#1e1b4b !important',
-                  }
-                }}
                 InputLabelProps={{
                   sx: {
-                    color: '#64748b !important',
+                    color: '#64748b',
                   }
                 }}
               />
 
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 3, color: '#64748b !important' }}>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 3, color: '#64748b' }}>
                 Your contact information will be visible only to verified users who want to claim the item.
               </Typography>
             </Grid>
@@ -798,7 +909,7 @@ const ItemForm = ({ onClose, initialData }) => {
               {loading ? (
                 <CircularProgress size={24} color="inherit" />
               ) : (
-                `Report ${formData.type === 'lost' ? 'Lost' : 'Found'} Item`
+                `Report ${formData.type === 'LOST' ? 'Lost' : 'Found'} Item`
               )}
             </Button>
           </Box>
