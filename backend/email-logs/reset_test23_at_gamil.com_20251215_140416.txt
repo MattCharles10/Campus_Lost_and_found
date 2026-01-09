@@ -1,0 +1,7 @@
+Password Reset Request
+======================
+Email: test23@gamil.com
+Time: 2025-12-15 14:04:16
+Token: 8929ee05-551b-4ef8-b58d-e391883ba816
+Link: http://localhost:8082/reset-password?token=8929ee05-551b-4ef8-b58d-e391883ba816
+Expires: 24 hours from generation

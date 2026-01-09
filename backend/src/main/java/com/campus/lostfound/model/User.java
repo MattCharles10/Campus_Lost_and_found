@@ -4,12 +4,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
@@ -54,12 +57,6 @@ public class User {
     @Column(name = "email_verified")
     private Boolean emailVerified = false;
 
-    @Enumerated(EnumType.STRING)
-    private AuthProvider provider = AuthProvider.LOCAL;
-
-    @Column(name = "provider_id")
-    private String providerId;
-
     @Column(name = "is_active")
     private Boolean isActive = true;
 
@@ -74,7 +71,25 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider = AuthProvider.LOCAL;
+
+    @Column(name = "provider_id")
+    private String providerId;
+
+    // Add these fields for password reset
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
+
+    @Column(name = "reset_password_expires")
+    private LocalDateTime resetPasswordExpires;
+
+
+
     public enum AuthProvider {
         LOCAL, GOOGLE
     }
+
+
+
 }

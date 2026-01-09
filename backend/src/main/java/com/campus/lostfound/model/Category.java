@@ -1,34 +1,28 @@
 package com.campus.lostfound.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
+import lombok.*;
 
 @Entity
 @Table(name = "categories")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true, nullable = false)
     private String name;
 
-    private String description;
+    private String displayName;
 
     private String icon;
 
-    private String color = "#667eea";
+    private String color;
 
-    @Column(name = "is_active")
-    private Boolean isActive = true;
-
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
+    @Builder.Default
+    private Boolean active = true;
 }

@@ -1,0 +1,7 @@
+Password Reset Request
+======================
+Email: 230436.cd@rmkec.ac.in
+Time: 2025-12-02 12:01:15
+Token: 61ac1ae1-ccac-42f4-969a-b25c8e59f21d
+Link: http://localhost:8082/reset-password?token=61ac1ae1-ccac-42f4-969a-b25c8e59f21d
+Expires: 24 hours from generation

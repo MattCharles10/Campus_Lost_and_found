@@ -56,7 +56,6 @@ public class AuthService {
                 user.getLastName(),
                 user.getEmail(),
                 user.getStudentId(),
-                user.getPhoneNumber(),
                 user.getAvatarUrl()
         );
 
@@ -94,6 +93,14 @@ public class AuthService {
 
         if (userOptional.isPresent()) {
             user = userOptional.get();
+            // Update existing user with Google info if needed
+            if (user.getAvatarUrl() == null && googleUserInfo.getPicture() != null) {
+                user.setAvatarUrl(googleUserInfo.getPicture());
+            }
+            if (user.getProvider() == User.AuthProvider.LOCAL) {
+                user.setProvider(User.AuthProvider.GOOGLE);
+                user.setProviderId(googleUserInfo.getSub());
+            }
         } else {
             // Register new user
             user = new User();
@@ -124,7 +131,54 @@ public class AuthService {
                 user.getLastName(),
                 user.getEmail(),
                 user.getStudentId(),
-                user.getPhoneNumber(),
+                user.getAvatarUrl()
+        );
+
+        return new AuthResponse(jwt, "Bearer", userResponse);
+    }
+
+    public AuthResponse authenticateWithGoogleDev(String email, String firstName, String lastName) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        User user;
+
+        if (userOptional.isPresent()) {
+            user = userOptional.get();
+            // Update existing user if needed
+            if (user.getFirstName() == null && firstName != null) {
+                user.setFirstName(firstName);
+            }
+            if (user.getLastName() == null && lastName != null) {
+                user.setLastName(lastName);
+            }
+        } else {
+            // Register new user
+            user = new User();
+            user.setFirstName(firstName != null ? firstName : "Google");
+            user.setLastName(lastName != null ? lastName : "User");
+            user.setEmail(email);
+            user.setPassword(passwordEncoder.encode("google-dev-" + System.currentTimeMillis()));
+            user.setProvider(User.AuthProvider.GOOGLE);
+            user.setProviderId("dev-" + System.currentTimeMillis());
+            user.setEmailVerified(true);
+            user = userRepository.save(user);
+        }
+
+        // Update last login
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
+
+        // Generate JWT token
+        UserPrincipal userPrincipal = UserPrincipal.create(user);
+        String jwt = jwtUtils.generateJwtToken(
+                new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities())
+        );
+
+        UserResponse userResponse = new UserResponse(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getStudentId(),
                 user.getAvatarUrl()
         );
 

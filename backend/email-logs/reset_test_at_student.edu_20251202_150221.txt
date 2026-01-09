@@ -1,0 +1,7 @@
+Password Reset Request
+======================
+Email: test@student.edu
+Time: 2025-12-02 15:02:21
+Token: 9d207422-2d2d-4ebc-a13b-82841c46581d
+Link: http://localhost:8082/reset-password?token=9d207422-2d2d-4ebc-a13b-82841c46581d
+Expires: 24 hours from generation

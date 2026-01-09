@@ -7,7 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class LostfoundApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(LostfoundApplication.class, args);
+
+        SpringApplication.run(LostfoundApplication.class, args);
+
+        System.out.println("git Application started successfully!");
 	}
 
 }

@@ -18,8 +18,16 @@ public class JwtUtils {
     @Value("${app.jwt.expiration}")
     private int jwtExpirationMs;
 
+    // Use a fixed key to ensure consistency
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        try {
+            // Ensure consistent encoding
+            byte[] keyBytes = jwtSecret.getBytes("UTF-8");
+            return Keys.hmacShaKeyFor(keyBytes);
+        } catch (Exception e) {
+            // Fallback to a fixed key
+            return Keys.hmacShaKeyFor("fallback-secret-key-256-bits-long-32chars!".getBytes());
+        }
     }
 
     public String generateJwtToken(Authentication authentication) {
@@ -57,6 +65,8 @@ public class JwtUtils {
             System.err.println("JWT token is unsupported: " + e.getMessage());
         } catch (IllegalArgumentException e) {
             System.err.println("JWT claims string is empty: " + e.getMessage());
+        } catch (JwtException e) {
+            System.err.println("JWT validation failed: " + e.getMessage());
         }
         return false;
     }

@@ -4,6 +4,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -11,13 +12,25 @@ import java.util.Collections;
 @Service
 public class GoogleAuthService {
 
-    private static final String GOOGLE_CLIENT_ID = "your-google-client-id.apps.googleusercontent.com";
+    @Value("${app.google.client-id:default-client-id}")
+    private String googleClientId;
 
     public GoogleUserInfo verifyGoogleToken(String idTokenString) {
         try {
+            // Validate input
+            if (idTokenString == null || idTokenString.trim().isEmpty()) {
+                throw new RuntimeException("Google ID token is null or empty");
+            }
+
+            // Check if client ID is configured
+            if (googleClientId == null || "default-client-id".equals(googleClientId) ||
+                    googleClientId.contains("your-google-client-id")) {
+                throw new RuntimeException("Google Client ID not configured. Please set app.google.client-id in application.properties");
+            }
+
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                     new NetHttpTransport(), new GsonFactory())
-                    .setAudience(Collections.singletonList(GOOGLE_CLIENT_ID))
+                    .setAudience(Collections.singletonList(googleClientId))
                     .build();
 
             GoogleIdToken idToken = verifier.verify(idTokenString);
@@ -34,10 +47,10 @@ public class GoogleAuthService {
 
                 return userInfo;
             } else {
-                throw new RuntimeException("Invalid Google ID token.");
+                throw new RuntimeException("Invalid Google ID token - verification failed");
             }
         } catch (Exception e) {
-            throw new RuntimeException("Google token verification failed: " + e.getMessage());
+            throw new RuntimeException("Google token verification failed: " + e.getMessage(), e);
         }
     }
 
