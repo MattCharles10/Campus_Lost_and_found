@@ -55,7 +55,10 @@ The system enhances visibility by organizing item details, locations, and images
 ![Landing Page](screenshots/landing.png)
 
 ### Login and Registration
-![Login](screenshots/login.png)
+<p float="left">
+  <img src="screenshots/login.png" width="300" />
+  <img src="screenshots/register.png" width="300" />
+</p>
 
 ### Dashboard
 ![Dashboard](screenshots/dashboard.png)
