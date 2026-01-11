@@ -1,16 +1,81 @@
-# React + Vite
+# Campus Lost and Found Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A centralized web-based platform that helps campus users report, search, and recover lost or found items efficiently through secure access, intelligent matching, and location-aware features.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Project Overview
+Losing personal belongings on campus is a common challenge faced by students, faculty, and staff, often leading to inconvenience, stress, and wasted time. The **Campus Lost and Found Tracker** addresses this issue by providing a unified digital platform where verified campus users can report, view, and track lost and found items.
 
-## React Compiler
+The system enhances visibility by organizing item details, locations, and images in one place. With intelligent matching and location-aware features such as hotspots, the platform significantly improves recovery chances while fostering a more connected and supportive campus environment.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Objectives
+- Provide a centralized platform for managing lost and found items within the campus.
+- Enable fast and accurate matching between lost and found item postings.
+- Support secure communication between users during item recovery.
+- Restrict access to verified campus members for safety and authenticity.
+- Ensure platform reliability through administrative moderation.
+- Analyze usage patterns and recovery trends through dashboards and reports.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## Core Features
+- **Landing Page:** A user-friendly entry point that highlights platform purpose and guides users to login or register.
+- **Secure Authentication:** Role-based login and registration with campus-only user verification.
+- **Lost & Found Posting:** Item submissions with images, categories, tags, and detailed descriptions.
+- **Intelligent Matching:** Keyword-based, fuzzy logic, and location-based item matching.
+- **Hotspot Feature:** Visual identification of high-frequency lost and found locations within the campus.
+- **Secure In-App Chat:** Private communication between users with reporting and privacy controls.
+- **Admin Moderation:** Content review, user management, and platform oversight.
+
+---
+
+## Technology Stack
+- **Frontend:** React JS  
+- **Backend:** Spring Boot (Java)  
+- **Database:** MySQL  
+- **API Testing:** Postman  
+
+---
+
+## Application Workflow
+1. Users access the platform through a landing page and authenticate using verified campus credentials.
+2. Lost or found items are posted with images, categories, and location details.
+3. The system analyzes data to identify potential matches and hotspot patterns.
+4. Users communicate securely through in-app chat to recover items.
+5. Administrators monitor activity and manage content to ensure platform reliability.
+
+---
+
+## Insights
+
+### Landing Page
+<!-- Add landing page screenshot here -->
+![Landing Page](screenshots/landing.png)
+
+### Login and Registration
+<!-- Add login/registration screenshot here -->
+![Login](screenshots/login.png)
+
+### Dashboard
+<!-- Add dashboard/home screenshot here -->
+![Dashboard](screenshots/dashboard.png)
+
+### Lost and Found Item Posting
+<!-- Add item posting screenshot here -->
+![Item Posting](screenshots/item-post.png)
+
+### Hotspot View
+<!-- Add hotspot/map view screenshot here -->
+![Hotspot](screenshots/hotspot.png)
+
+### In-App Chat
+<!-- Add chat interface screenshot here -->
+![Chat](screenshots/chat.png)
+
+---
+
+## Conclusion
+The **Campus Lost and Found Tracker** provides a reliable, secure, and location-aware solution for managing lost and found items within a campus. By combining an intuitive user interface, intelligent matching, hotspot analysis, and secure communication, the platform enhances recovery efficiency and strengthens collaboration among campus users.
