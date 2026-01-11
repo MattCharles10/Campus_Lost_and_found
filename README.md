@@ -66,8 +66,8 @@ The system enhances visibility by organizing item details, locations, and images
 ### Lost and Found Item Posting
 ![Item Posting](screenshots/item-post.png)
 
-### Hotspot View
-![Hotspot](screenshots/hotspot.png)
+### Matching Algorithm
+![Hotspot](screenshots/matching.png)
 
 ### In-App Chat
 ![Chat](screenshots/chat.png)
