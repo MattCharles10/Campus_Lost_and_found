@@ -2,14 +2,12 @@
 
 A centralized web-based platform that helps campus users report, search, and recover lost or found items efficiently through secure access, intelligent matching, and location-aware features.
 
----
 
 ## 📌 Project Overview
 Losing personal belongings on campus is a common challenge faced by students, faculty, and staff, often leading to inconvenience, stress, and wasted time. The **Campus Lost and Found Tracker** addresses this issue by providing a unified digital platform where verified campus users can report, view, and track lost and found items.
 
 The system enhances visibility by organizing item details, locations, and images in one place. With intelligent matching and location-aware features such as hotspots, the platform significantly improves recovery chances while fostering a more connected and supportive campus environment.
 
----
 
 ## 🎯 Objectives
 - Centralized platform for reporting and tracking lost/found items.  
@@ -19,7 +17,6 @@ The system enhances visibility by organizing item details, locations, and images
 - Reliable platform via admin moderation.  
 - Insights through dashboards and usage reports.
 
----
 
 ## ⚙️ Core Features
 - **Landing Page:** User-friendly entry point guiding login and registration.  
@@ -30,15 +27,12 @@ The system enhances visibility by organizing item details, locations, and images
 - **In-App Chat:** Secure communication between users for item recovery.
 
 
----
-
 ## 🛠️ Technology Stack
 - **Frontend:** React JS  
 - **Backend:** Spring Boot (Java)  
 - **Database:** MySQL  
 - **API Testing:** Postman  
 
----
 
 ## 🔄 Application Workflow
 1. **🖥️ Login:** Access landing page with verified campus credentials.  
@@ -48,7 +42,6 @@ The system enhances visibility by organizing item details, locations, and images
 5. **📊 Oversight:** Admins ensure platform reliability.
 
 
----
 
 ## 🖼️ Insights
 
@@ -73,7 +66,7 @@ The system enhances visibility by organizing item details, locations, and images
 ### In-App Chat
 ![Chat](screenshots/chat.png)
 
----
+
 
 ## ✅ Conclusion
 The **Campus Lost and Found Tracker** provides a reliable, secure, and location-aware solution for managing lost and found items within a campus. By combining an intuitive user interface, intelligent matching, hotspot analysis, and secure communication, the platform enhances recovery efficiency and strengthens collaboration among campus users.
