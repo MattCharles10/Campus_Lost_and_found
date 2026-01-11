@@ -67,6 +67,13 @@ The system enhances visibility by organizing item details, locations, and images
 ![Chat](screenshots/chat.png)
 
 
+## 🚀 Future Enhancements
+- **Campus Map Integration:** Visual representation of lost and found hotspots across the campus.  
+- **Multi-Platform App:** Extend the platform to mobile and other devices for wider accessibility.  
+- **Push Notifications:** Instant alerts when a lost or found item matches a user’s report.  
+- **AI-Based Matching:** Use image recognition and intelligent algorithms for faster and more accurate matches.    
+- **Enhanced Security & Privacy:** Advanced authentication and reporting features for safer user experience.
+
 
 ## ✅ Conclusion
 The **Campus Lost and Found Tracker** provides a reliable, secure, and location-aware solution for managing lost and found items within a campus. By combining an intuitive user interface, intelligent matching, hotspot analysis, and secure communication, the platform enhances recovery efficiency and strengthens collaboration among campus users.
