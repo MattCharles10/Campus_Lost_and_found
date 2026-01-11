@@ -1,4 +1,4 @@
-# 🎒 Campus Lost and Found Tracker
+# 🔎 Campus Lost and Found Tracker
 
 A centralized web-based platform that helps campus users report, search, and recover lost or found items efficiently through secure access, intelligent matching, and location-aware features.
 
@@ -12,23 +12,23 @@ The system enhances visibility by organizing item details, locations, and images
 ---
 
 ## 🎯 Objectives
-- Provide a centralized platform for managing lost and found items within the campus.
-- Enable fast and accurate matching between lost and found item postings.
-- Support secure communication between users during item recovery.
-- Restrict access to verified campus members for safety and authenticity.
-- Ensure platform reliability through administrative moderation.
-- Analyze usage patterns and recovery trends through dashboards and reports.
+- Centralized platform for reporting and tracking lost/found items.  
+- Quick and accurate matching of items.  
+- Secure user communication for item recovery.  
+- Access restricted to verified campus members.  
+- Reliable platform via admin moderation.  
+- Insights through dashboards and usage reports.
 
 ---
 
 ## ⚙️ Core Features
-- **Landing Page:** A user-friendly entry point that highlights platform purpose and guides users to login or register.
-- **Secure Authentication:** Role-based login and registration with campus-only user verification.
-- **Lost & Found Posting:** Item submissions with images, categories, tags, and detailed descriptions.
-- **Intelligent Matching:** Keyword-based, fuzzy logic, and location-based item matching.
-- **Hotspot Feature:** Visual identification of high-frequency lost and found locations within the campus.
-- **Secure In-App Chat:** Private communication between users with reporting and privacy controls.
-- **Admin Moderation:** Content review, user management, and platform oversight.
+- **Landing Page:** User-friendly entry point guiding login and registration.  
+- **Secure Authentication:** Role-based access with campus-only verification.  
+- **Lost & Found Posting:** Submit items with images, categories, and tags.  
+- **Matching Algorithm:** Intelligent keyword and location-based item matching.  
+- **Hotspot Feature:** Highlights high-frequency lost and found locations.  
+- **In-App Chat:** Secure communication between users for item recovery.
+
 
 ---
 
@@ -41,11 +41,12 @@ The system enhances visibility by organizing item details, locations, and images
 ---
 
 ## 🔄 Application Workflow
-1. Users access the platform through a landing page and authenticate using verified campus credentials.
-2. Lost or found items are posted with images, categories, and location details.
-3. The system analyzes data to identify potential matches and hotspot patterns.
-4. Users communicate securely through in-app chat to recover items.
-5. Administrators monitor activity and manage content to ensure platform reliability.
+1. **🖥️ Login:** Access landing page with verified campus credentials.  
+2. **📌 Post Items:** Submit lost/found items with images, categories, and location.  
+3. **🧠 Matching:** System finds potential matches and hotspot patterns.  
+4. **💬 Chat:** Secure in-app communication for recovery.  
+5. **📊 Oversight:** Admins ensure platform reliability.
+
 
 ---
 
