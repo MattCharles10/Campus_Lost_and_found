@@ -127,10 +127,13 @@ graph TB
 
 ### Dashboard
 <img width="100%" alt="Dashboard Screenshot" src="https://github.com/user-attachments/assets/8c9a3aeb-0508-4324-afc5-3cd73b73dc46" />
+
 ### Lost and Found Item Posting
 <img width="100%" alt="Lost and Found Item Posting Screenshot" src="https://github.com/user-attachments/assets/539b4893-fa2a-40d6-a4f0-16ecb9319e49" />
+
 ### Matching Algorithm
 <img width="100%" alt="Matching Algorithm Screenshot" src="https://github.com/user-attachments/assets/1d045d9b-f251-4e1a-8b33-2c93e3d0dc6e" />
+
 ### In-App Chat
 <img width="100%" alt="In-App Chat Screenshot" src="https://github.com/user-attachments/assets/2a52c70b-ff65-411c-bc91-dead2752ac6f" />
 
