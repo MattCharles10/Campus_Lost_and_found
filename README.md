@@ -163,12 +163,12 @@ Ways to Contribute
 - **Submit Code**  Fix bugs or add features via PRs
 ### Development Process
 bash
-- **1. Fork the repository**
-- **2. Clone your fork** git clone  https://github.com/MattCharles10/Campus_Lost_and_found.git
-- **3. Create feature branch**   git checkout -b feature/amazing-feature
-- **4. Make changes and commit** git commit -m "Add amazing feature"
-- **5. Push to your fork** git push origin feature/amazing-feature
--**6. Create Pull Request**
+- **Fork the repository**
+- **Clone your fork** git clone  https://github.com/MattCharles10/Campus_Lost_and_found.git
+- **Create feature branch**   git checkout -b feature/amazing-feature
+- **Make changes and commit** git commit -m "Add amazing feature"
+- **Push to your fork** git push origin mathew/amazing-feature
+- **Create Pull Request**
   
 ## 📄 License
 This project is licensed under the MIT License - see the LICENSE file for details. 
