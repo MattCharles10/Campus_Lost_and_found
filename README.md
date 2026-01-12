@@ -35,12 +35,22 @@ The system enhances visibility by organizing item details, locations, and images
 
 
 ## 🔄 Application Workflow
+
+```mermaid
+flowchart LR
+    A[User Authentication]
+    B[Item Posting]
+    C[Smart Matching]
+    D[Secure Chat]
+    E[Platform Monitoring]
+
+    A --> B --> C --> D --> E
+```
 1. **🖥️ Login:** Access landing page with verified campus credentials.  
 2. **📌 Post Items:** Submit lost/found items with images, categories, and location.  
 3. **🧠 Matching:** System finds potential matches and hotspot patterns.  
 4. **💬 Chat:** Secure in-app communication for recovery.  
 5. **📊 Oversight:** Admins ensure platform reliability.
-
 
 
 ## 🖼️ Insights
