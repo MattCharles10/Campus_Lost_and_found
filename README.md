@@ -1,7 +1,5 @@
-# 🎒 Campus Lost and Found Tracker  
-**“From lost to found, in a click.”**
-
-A centralized web-based platform designed to help campus members efficiently report, search, and recover lost or found items within the campus.
+🔎 Campus Lost and Found Tracker
+<p align="center"> <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"> <img src="https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen" alt="Spring Boot"> <img src="https://img.shields.io/badge/React-18.x-blue" alt="React"> <img src="https://img.shields.io/badge/MySQL-8.0-orange" alt="MySQL"> </p><p align="center"> A centralized web-based platform that helps campus users report, search, and recover lost or found items efficiently through secure access, intelligent matching, and location-aware features. </p>
 
 ---
 
